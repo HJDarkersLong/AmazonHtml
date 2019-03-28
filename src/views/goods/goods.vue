@@ -53,7 +53,6 @@
           <span>{{scope.row.update_date}}</span>
         </template>
       </el-table-column>-->
-      <!--测试-->
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('goods:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
