@@ -82,19 +82,19 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex'
+  import { mapGetters } from 'vuex'
 
   export default {
     data() {
       return {
-        totalCount: 0, //分页组件--数据总条数
-        list: [],//表格的数据
-        listLoading: false,//数据加载等待动画
+        totalCount: 0, // 分页组件--数据总条数
+        list: [], // 表格的数据
+        listLoading: false, // 数据加载等待动画
         listQuery: {
-          pageNum: 1,//页码
-          pageRow: 50,//每页条数
+          pageNum: 1, // 页码
+          pageRow: 50// 每页条数
         },
-        roles: [],//角色列表
+        roles: [], // 角色列表
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
@@ -111,9 +111,9 @@
       }
     },
     created() {
-      this.getList();
+      this.getList()
       if (this.hasPerm('user:add') || this.hasPerm('user:update')) {
-        this.getAllRoles();
+        this.getAllRoles()
       }
     },
     computed: {
@@ -124,85 +124,85 @@
     methods: {
       getAllRoles() {
         this.api({
-          url: "/user/getAllRoles",
-          method: "get"
+          url: '/user/getAllRoles',
+          method: 'get'
         }).then(data => {
-          this.roles = data.list;
+          this.roles = data.list
         })
       },
       getList() {
-        //查询列表
-        this.listLoading = true;
+        // 查询列表
+        this.listLoading = true
         this.api({
-          url: "/user/list",
-          method: "get",
+          url: '/user/list',
+          method: 'get',
           params: this.listQuery
         }).then(data => {
-          this.listLoading = false;
-          this.list = data.list;
-          this.totalCount = data.totalCount;
+          this.listLoading = false
+          this.list = data.list
+          this.totalCount = data.totalCount
         })
       },
       handleSizeChange(val) {
-        //改变每页数量
+        // 改变每页数量
         this.listQuery.pageRow = val
-        this.handleFilter();
+        this.handleFilter()
       },
       handleCurrentChange(val) {
-        //改变页码
+        // 改变页码
         this.listQuery.pageNum = val
-        this.getList();
+        this.getList()
       },
       handleFilter() {
-        //查询事件
+        // 查询事件
         this.listQuery.pageNum = 1
         this.getList()
       },
       getIndex($index) {
-        //表格序号
+        // 表格序号
         return (this.listQuery.pageNum - 1) * this.listQuery.pageRow + $index + 1
       },
       showCreate() {
-        //显示新增对话框
-        this.tempUser.username = "";
-        this.tempUser.password = "";
-        this.tempUser.nickname = "";
-        this.tempUser.roleId = "";
-        this.tempUser.userId = "";
-        this.dialogStatus = "create"
+        // 显示新增对话框
+        this.tempUser.username = ''
+        this.tempUser.password = ''
+        this.tempUser.nickname = ''
+        this.tempUser.roleId = ''
+        this.tempUser.userId = ''
+        this.dialogStatus = 'create'
         this.dialogFormVisible = true
       },
       showUpdate($index) {
-        let user = this.list[$index];
-        this.tempUser.username = user.username;
-        this.tempUser.nickname = user.nickname;
-        this.tempUser.roleId = user.roleId;
-        this.tempUser.userId = user.userId;
-        this.tempUser.deleteStatus = '1';
-        this.tempUser.password = '';
-        this.dialogStatus = "update"
+        let user = this.list[$index]
+        this.tempUser.username = user.username
+        this.tempUser.nickname = user.nickname
+        this.tempUser.roleId = user.roleId
+        this.tempUser.userId = user.userId
+        this.tempUser.deleteStatus = '1'
+        this.tempUser.password = ''
+        this.dialogStatus = 'update'
         this.dialogFormVisible = true
       },
       createUser() {
-        //添加新用户
+        // 添加新用户
         this.api({
-          url: "/user/addUser",
-          method: "post",
+          url: '/user/addUser',
+          method: 'post',
           data: this.tempUser
         }).then(() => {
-          this.getList();
+          this.getList()
           this.dialogFormVisible = false
         })
       },
       updateUser() {
-        //修改用户信息
-        let _vue = this;
+        // 修改用户信息
+        let _vue = this
         this.api({
-          url: "/user/updateUser",
-          method: "post",
+          url: '/user/updateUser',
+          method: 'post',
           data: this.tempUser
         }).then(() => {
-          let msg = "修改成功";
+          let msg = '修改成功'
           this.dialogFormVisible = false
           if (this.userId === this.tempUser.userId) {
             msg = '修改成功,部分信息重新登录后生效'
@@ -212,31 +212,31 @@
             type: 'success',
             duration: 1 * 1000,
             onClose: () => {
-              _vue.getList();
+              _vue.getList()
             }
           })
         })
       },
       removeUser($index) {
-        let _vue = this;
+        let _vue = this
         this.$confirm('确定删除此用户?', '提示', {
           confirmButtonText: '确定',
           showCancelButton: false,
           type: 'warning'
         }).then(() => {
-          let user = _vue.list[$index];
-          user.deleteStatus = '2';
+          let user = _vue.list[$index]
+          user.deleteStatus = '2'
           _vue.api({
-            url: "/user/updateUser",
-            method: "post",
+            url: '/user/updateUser',
+            method: 'post',
             data: user
           }).then(() => {
             _vue.getList()
           }).catch(() => {
-            _vue.$message.error("删除失败")
+            _vue.$message.error('删除失败')
           })
         })
-      },
+      }
     }
   }
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <a href="https://github.com/Heeexy/SpringBoot-Shiro-Vue" target="_blank"><img style="margin: 40px"
-      src="http://img.heeexy.com/github.png"></a>
+      <img style="margin: 40px" src="/src/assets/images/welcome.jpg">
   </div>
 </template>
 <script>
@@ -9,6 +8,6 @@
     name: 'dashboard',
     data() {
       return {}
-    },
+    }
   }
 </script>

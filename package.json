@@ -2,7 +2,7 @@
   "name": "vue-admin",
   "version": "3.1.0",
   "license": "MIT",
-  "description": "",
+  "description": "Amazon前端框架代码",
   "author": "",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -36,10 +36,15 @@
     "chalk": "2.3.0",
     "copy-webpack-plugin": "4.2.3",
     "css-loader": "0.28.7",
-    "eslint": "4.13.1",
+    "eslint": "^5.15.3",
+    "eslint-config-standard": "^12.0.0",
     "eslint-friendly-formatter": "3.0.0",
     "eslint-loader": "1.9.0",
     "eslint-plugin-html": "4.0.1",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "eventsource-polyfill": "0.9.6",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.5",
@@ -75,5 +80,15 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "main": ".postcssrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HJDarkersLong/AmazonHtml.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/HJDarkersLong/AmazonHtml/issues"
+  },
+  "homepage": "https://github.com/HJDarkersLong/AmazonHtml#readme"
 }

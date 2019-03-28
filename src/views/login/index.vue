@@ -35,8 +35,8 @@
           password: '123456'
         },
         loginRules: {
-          username: [{required: true, trigger: 'blur', message: "请输入用户名"}],
-          password: [{required: true, trigger: 'blur', message: "请输入密码"}]
+          username: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
+          password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
         },
         loading: false
       }
@@ -48,10 +48,10 @@
             this.loading = true
             this.$store.dispatch('Login', this.loginForm).then(data => {
               this.loading = false
-              if ("success" === data.result) {
-                this.$router.push({path: '/'})
+              if (data.result === 'success') {
+                this.$router.push({ path: '/' })
               } else {
-                this.$message.error("账号/密码错误");
+                this.$message.error('账号/密码错误')
               }
             }).catch(() => {
               this.loading = false

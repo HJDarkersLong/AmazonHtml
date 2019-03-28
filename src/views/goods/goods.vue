@@ -72,7 +72,7 @@
       <el-form class="small-space" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
         <el-col :span="6">
           <el-form-item  label=" 商品名称" >
-            <el-input type="text" v-model="tempGoods.name"> </el-input>
+            <el-input type="text" aria-required="true" v-model="tempGoods.name"> </el-input>
           </el-form-item>
 
           <el-form-item label=" 中文名称">
@@ -225,12 +225,12 @@
   export default {
     data() {
       return {
-        totalCount: 0, //分页组件--数据总条数
-        list: [],//表格的数据
-        listLoading: false,//数据加载等待动画
+        totalCount: 0, // 分页组件--数据总条数
+        list: [], // 表格的数据
+        listLoading: false, // 数据加载等待动画
         listQuery: {
-          pageNum: 1,//页码
-          pageRow: 50,//每页条数
+          pageNum: 1, // 页码
+          pageRow: 50, // 每页条数
           name: ''
         },
         dialogStatus: 'create',
@@ -240,145 +240,152 @@
           create: '添加商品'
         },
         tempGoods: {
-          id: "",
-          name: "",
-          cn_name: "",
-          en_name: "",
-          pcl_no: "",
-          sku_no: "",
-          other_name: "",
-          cn_customs_name: "",
-          en_customs_name: "",
-          hs_code: "",
-          category_no: "",
-          tag_no: "",
-          brand_no: "",
-          business_dev_user_no: "",
-          buy_qus_user_no: "",
-          buy_user_no: "",
-          length: "",
-          width: "",height: "",
-          weight: "",
-          body_weight_5000: "",
-          body_weight_6000: "",
-          base_price: "",
-          sale_price: "",
-          pic_address: "",
-          description: "",
-          easy_discription: "",
-          key_code: "",
-          status: "",
-          create_by: "",
-          create_date: "",
-          update_by: "",
-          update_date: "",
-          remarks: ""
+          id: '',
+          name: '',
+          cn_name: '',
+          en_name: '',
+          pcl_no: '',
+          sku_no: '',
+          other_name: '',
+          cn_customs_name: '',
+          en_customs_name: '',
+          hs_code: '',
+          category_no: '',
+          tag_no: '',
+          brand_no: '',
+          business_dev_user_no: '',
+          buy_qus_user_no: '',
+          buy_user_no: '',
+          length: '',
+          width: '',
+          height: '',
+          weight: '',
+          body_weight_5000: '',
+          body_weight_6000: '',
+          base_price: '',
+          sale_price: '',
+          pic_address: '',
+          description: '',
+          easy_discription: '',
+          key_code: '',
+          status: '',
+          create_by: '',
+          create_date: '',
+          update_by: '',
+          update_date: '',
+          remarks: ''
         }
       }
     },
     created() {
-      this.getList();
+      this.getList()
     },
     methods: {
       getList() {
-        //查询列表
+        // 查询列表
         if (!this.hasPerm('goods:list')) {
           return
         }
-        this.listLoading = true;
+        this.listLoading = true
         this.api({
-          url: "/goods/listGoods",
-          method: "get",
+          url: '/goods/listGoods',
+          method: 'get',
           params: this.listQuery
         }).then(data => {
           console.log(data)
-          this.listLoading = false;
-          this.list = data.list;
-          this.totalCount = data.totalCount;
+          this.listLoading = false
+          this.list = data.list
+          this.totalCount = data.totalCount
         })
       },
       handleSizeChange(val) {
-        //改变每页数量
+        // 改变每页数量
         this.listQuery.pageRow = val
-        this.handleFilter();
+        this.handleFilter()
       },
       handleCurrentChange(val) {
-        //改变页码
+        // 改变页码
         this.listQuery.pageNum = val
-        this.getList();
+        this.getList()
       },
       getIndex($index) {
-        //表格序号
+        // 表格序号
         return (this.listQuery.pageNum - 1) * this.listQuery.pageRow + $index + 1
       },
       showCreate() {
-        //显示新增对话框
-        this.tempGoods.id ="";
-        this.tempGoods.name ="";
-        this.tempGoods.cn_name ="";
-        this.tempGoods.en_name ="";
-        this.tempGoods.pcl_no ="";
-        this.tempGoods.sku_no ="";
-        this.tempGoods.other_name ="";
-        this.tempGoods.cn_customs_name ="";
-        this.tempGoods.en_customs_name ="";
-        this.tempGoods.hs_code ="";
-        this.tempGoods.category_no ="";
-        this.tempGoods.tag_no ="";
-        this.tempGoods.brand_no ="";
-        this.tempGoods.business_dev_user_no ="";
-        this.tempGoods. buy_qus_user_no ="";
-        this.tempGoods.buy_user_no ="";
-        this.tempGoods.length ="";
-        this.tempGoods.width ="";
-        this.tempGoods.height ="";
-        this.tempGoods.weight ="";
-        this.tempGoods.body_weight_5000 ="";
-        this.tempGoods.body_weight_6000 ="";
-        this.tempGoods.base_price ="";
-        this.tempGoods.sale_price ="";
-        this.tempGoods.pic_address ="";
-        this.tempGoods.description ="";
-        this.tempGoods.easy_discription ="";
-        this.tempGoods.key_code ="";
-        this.tempGoods.status ="";
-        this.tempGoods.create_by ="";
-        this.tempGoods.create_date ="";
-        this.tempGoods.update_by ="";
-        this.tempGoods.update_date ="";
-        this.tempGoods.remarks ="";
-        this.dialogStatus = "create";
+        // 显示新增对话框
+        this.tempGoods.id =''
+        this.tempGoods.name =''
+        this.tempGoods.cn_name =''
+        this.tempGoods.en_name =''
+        this.tempGoods.pcl_no =''
+        this.tempGoods.sku_no =''
+        this.tempGoods.other_name =''
+        this.tempGoods.cn_customs_name =''
+        this.tempGoods.en_customs_name =''
+        this.tempGoods.hs_code =''
+        this.tempGoods.category_no =''
+        this.tempGoods.tag_no =''
+        this.tempGoods.brand_no =''
+        this.tempGoods.business_dev_user_no =''
+        this.tempGoods.buy_qus_user_no =''
+        this.tempGoods.buy_user_no =''
+        this.tempGoods.length =''
+        this.tempGoods.width =''
+        this.tempGoods.height =''
+        this.tempGoods.weight =''
+        this.tempGoods.body_weight_5000 =''
+        this.tempGoods.body_weight_6000 =''
+        this.tempGoods.base_price =''
+        this.tempGoods.sale_price =''
+        this.tempGoods.pic_address =''
+        this.tempGoods.description =''
+        this.tempGoods.easy_discription =''
+        this.tempGoods.key_code =''
+        this.tempGoods.status =''
+        this.tempGoods.create_by =''
+        this.tempGoods.create_date =''
+        this.tempGoods.update_by =''
+        this.tempGoods.update_date =''
+        this.tempGoods.remarks =''
+        this.dialogStatus = 'create'
         this.dialogFormVisible = true
       },
       showUpdate($index) {
-        //显示修改对话框
-        this.tempGoods.id = this.list[$index].id;
-        this.tempGoods.content = this.list[$index].content;
-        this.dialogStatus = "update"
+        // 显示修改对话框
+        this.tempGoods.id = this.list[$index].id
+        this.tempGoods.content = this.list[$index].content
+        this.dialogStatus = 'update'
         this.dialogFormVisible = true
       },
       createGoods() {
-        //保存
+        /**
+         * 获取用户id当做创建人
+         */
+        this.tempGoods.create_by = this.$store.state.user.userId
+
+        // 保存
         this.api({
-          url: "/goods/addGoods",
-          method: "post",
+          url: '/goods/addGoods',
+          method: 'post',
           data: this.tempGoods
         }).then(() => {
-          this.getList();
+          this.getList()
           this.dialogFormVisible = false
         })
       },
       updateGoods() {
-        //修改文章
+        this.tempGoods.update_by = this.$store.state.user.userId
+        // 修改文章
         this.api({
-          url: "/goods/updateGoods",
-          method: "post",
+          url: '/goods/updateGoods',
+          method: 'post',
           data: this.tempGoods
         }).then(() => {
-          this.getList();
+          this.getList()
           this.dialogFormVisible = false
         })
-      },
+      }
     }
   }
 </script>

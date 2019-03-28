@@ -7,12 +7,12 @@
   </scroll-bar>
 </template>
 <script>
-  import {mapGetters} from 'vuex'
+  import { mapGetters } from 'vuex'
   import SidebarItem from './SidebarItem'
   import ScrollBar from '@/components/ScrollBar'
 
   export default {
-    components: {SidebarItem, ScrollBar},
+    components: { SidebarItem, ScrollBar },
     computed: {
       ...mapGetters([
         'permission_routers',

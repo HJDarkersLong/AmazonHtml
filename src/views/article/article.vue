@@ -56,12 +56,12 @@
   export default {
     data() {
       return {
-        totalCount: 0, //分页组件--数据总条数
-        list: [],//表格的数据
-        listLoading: false,//数据加载等待动画
+        totalCount: 0, // 分页组件--数据总条数
+        list: [], // 表格的数据
+        listLoading: false, // 数据加载等待动画
         listQuery: {
-          pageNum: 1,//页码
-          pageRow: 50,//每页条数
+          pageNum: 1, // 页码
+          pageRow: 50, // 每页条数
           name: ''
         },
         dialogStatus: 'create',
@@ -71,80 +71,80 @@
           create: '创建文章'
         },
         tempArticle: {
-          id: "",
-          content: ""
+          id: '',
+          content: ''
         }
       }
     },
     created() {
-      this.getList();
+      this.getList()
     },
     methods: {
       getList() {
-        //查询列表
+        // 查询列表
         if (!this.hasPerm('article:list')) {
           return
         }
-        this.listLoading = true;
+        this.listLoading = true
         this.api({
-          url: "/article/listArticle",
-          method: "get",
+          url: '/article/listArticle',
+          method: 'get',
           params: this.listQuery
         }).then(data => {
-          this.listLoading = false;
-          this.list = data.list;
-          this.totalCount = data.totalCount;
+          this.listLoading = false
+          this.list = data.list
+          this.totalCount = data.totalCount
         })
       },
       handleSizeChange(val) {
-        //改变每页数量
+        // 改变每页数量
         this.listQuery.pageRow = val
-        this.handleFilter();
+        this.handleFilter()
       },
       handleCurrentChange(val) {
-        //改变页码
+        // 改变页码
         this.listQuery.pageNum = val
-        this.getList();
+        this.getList()
       },
       getIndex($index) {
-        //表格序号
+        // 表格序号
         return (this.listQuery.pageNum - 1) * this.listQuery.pageRow + $index + 1
       },
       showCreate() {
-        //显示新增对话框
-        this.tempArticle.content = "";
-        this.dialogStatus = "create"
+        // 显示新增对话框
+        this.tempArticle.content = ''
+        this.dialogStatus = 'create'
         this.dialogFormVisible = true
       },
       showUpdate($index) {
-        //显示修改对话框
-        this.tempArticle.id = this.list[$index].id;
-        this.tempArticle.content = this.list[$index].content;
-        this.dialogStatus = "update"
+        // 显示修改对话框
+        this.tempArticle.id = this.list[$index].id
+        this.tempArticle.content = this.list[$index].content
+        this.dialogStatus = 'update'
         this.dialogFormVisible = true
       },
       createArticle() {
-        //保存新文章
+        // 保存新文章
         this.api({
-          url: "/article/addArticle",
-          method: "post",
+          url: '/article/addArticle',
+          method: 'post',
           data: this.tempArticle
         }).then(() => {
-          this.getList();
+          this.getList()
           this.dialogFormVisible = false
         })
       },
       updateArticle() {
-        //修改文章
+        // 修改文章
         this.api({
-          url: "/article/updateArticle",
-          method: "post",
+          url: '/article/updateArticle',
+          method: 'post',
           data: this.tempArticle
         }).then(() => {
-          this.getList();
+          this.getList()
           this.dialogFormVisible = false
         })
-      },
+      }
     }
   }
 </script>
