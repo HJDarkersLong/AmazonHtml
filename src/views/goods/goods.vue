@@ -69,123 +69,147 @@
       :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :model="tempGoods" label-position="left" label-width="200px" style='width: 600px; margin-left:50px;'>
-        <el-form-item label="商品名称">
-          <el-input type="text" v-model="tempGoods.name"> </el-input>
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
+      <el-form class="small-space" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
+        <el-col :span="6">
+          <el-form-item  label=" 商品名称" >
+            <el-input type="text" v-model="tempGoods.name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="中文名称">
-          <el-input type="text" v-model="tempGoods.cn_name"> </el-input>
-        </el-form-item>
+          <el-form-item label=" 中文名称">
+            <el-input type="text" v-model="tempGoods.cn_name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="英文名称">
-          <el-input type="text" v-model="tempGoods.en_name"> </el-input>
-        </el-form-item>
+          <el-form-item label="英文名称">
+            <el-input type="text" v-model="tempGoods.en_name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="pcl商品编号">
-          <el-input type="text" v-model="tempGoods.pcl_no"> </el-input>
-        </el-form-item>
+          <el-form-item label="pcl商品编号">
+            <el-input type="text" v-model="tempGoods.pcl_no"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="sku货品编号">
-          <el-input type="text" v-model="tempGoods.sku_no"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item style="margin-left: 2px"label="sku货品编号">
+            <el-input type="text" v-model="tempGoods.sku_no"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="别名">
-          <el-input type="text" v-model="tempGoods.other_name"> </el-input>
-        </el-form-item>
+          <el-form-item label="  别名">
+            <el-input type="text" v-model="tempGoods.other_name"> </el-input>
+          </el-form-item>
+          <el-form-item label="中文报关名称">
+            <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="中文报关名称">
-          <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
-        </el-form-item>
+          <el-form-item label="英文报关名称">
+            <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="英文报关名称">
-          <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
-        </el-form-item>
 
-        <el-form-item label="海关编码">
-          <el-input type="text" v-model="tempGoods.hs_code"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="中文报关名称">
+            <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="分类编号">
-          <el-input type="text" v-model="tempGoods.category_no"> </el-input>
-        </el-form-item>
+          <el-form-item label="英文报关名称">
+            <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="标签编号">
-          <el-input type="text" v-model="tempGoods.tag_no"> </el-input>
-        </el-form-item>
+          <el-form-item label="海关编码">
+            <el-input type="text" v-model="tempGoods.hs_code"> </el-input>
+          </el-form-item>
+          <el-form-item label="分类编号">
+            <el-input type="text" v-model="tempGoods.category_no"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="品牌编号">
-          <el-input type="text" v-model="tempGoods.brand_no"> </el-input>
-        </el-form-item>
 
-        <el-form-item label="业务开发员">
-          <el-input type="text" v-model="tempGoods.business_dev_user_no"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="标签编号">
+            <el-input type="text" v-model="tempGoods.tag_no"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="采购询价员">
-          <el-input type="text" v-model="tempGoods.buy_qus_user_no"> </el-input>
-        </el-form-item>
+          <el-form-item label="品牌编号">
+            <el-input type="text" v-model="tempGoods.brand_no"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="采购员">
-          <el-input type="text" v-model="tempGoods.buy_user_no"> </el-input>
-        </el-form-item>
+          <el-form-item label="业务开发员">
+            <el-input type="text" v-model="tempGoods.business_dev_user_no"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="长(cm)">
-          <el-input type="text" v-model="tempGoods.length"> </el-input>
-        </el-form-item>
+          <el-form-item label="采购询价员">
+            <el-input type="text" v-model="tempGoods.buy_qus_user_no"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="宽(cm)">
-          <el-input type="text" v-model="tempGoods.width"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="采购员">
+            <el-input type="text" v-model="tempGoods.buy_user_no"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="高(cm)">
-          <el-input type="text" v-model="tempGoods.height"> </el-input>
-        </el-form-item>
+          <el-form-item label="长(cm)">
+            <el-input type="text" v-model="tempGoods.length"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="重量(kg)">
-          <el-input type="text" v-model="tempGoods.weight"> </el-input>
-        </el-form-item>
+          <el-form-item label="宽(cm)">
+            <el-input type="text" v-model="tempGoods.width"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="材积重/5000(L*W*H))">
-          <el-input type="text" v-model="tempGoods.body_weight_5000"> </el-input>
-        </el-form-item>
+          <el-form-item label="高(cm)">
+            <el-input type="text" v-model="tempGoods.height"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="材积重/6000(L*W*H))">
-          <el-input type="text" v-model="tempGoods.body_weight_6000"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="重量(kg)">
+            <el-input type="text" v-model="tempGoods.weight"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="成本价格(分)">
-          <el-input type="text" v-model="tempGoods.base_price"> </el-input>
-        </el-form-item>
+          <el-form-item label="材积重/5000(L*W*H))">
+            <el-input type="text" v-model="tempGoods.body_weight_5000"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="销售价格(分)">
-          <el-input type="text" v-model="tempGoods.sale_price"> </el-input>
-        </el-form-item>
+          <el-form-item label="材积重/6000(L*W*H))">
+            <el-input type="text" v-model="tempGoods.body_weight_6000"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="图片地址">
-          <el-input type="text" v-model="tempGoods.pic_address"> </el-input>
-        </el-form-item>
+          <el-form-item label="成本价格(分)">
+            <el-input type="text" v-model="tempGoods.base_price"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="产品描述">
-          <el-input type="text" v-model="tempGoods.description"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="销售价格(分)">
+            <el-input type="text" v-model="tempGoods.sale_price"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="产品简要描述">
-          <el-input type="text" v-model="tempGoods.easy_discription"> </el-input>
-        </el-form-item>
+          <el-form-item label="图片地址">
+            <el-input type="text" v-model="tempGoods.pic_address"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="关键词">
-          <el-input type="text" v-model="tempGoods.key_code"> </el-input>
-        </el-form-item>
+          <el-form-item label="产品描述">
+            <el-input type="text" v-model="tempGoods.description"> </el-input>
+          </el-form-item>
 
-        <el-form-item label="商品状态">
-          <el-input type="text" v-model="tempGoods.status"> </el-input>
-        </el-form-item>
+          <el-form-item label="产品简要描述">
+            <el-input type="text" v-model="tempGoods.easy_discription"> </el-input>
+          </el-form-item>
+        </el-col>
 
-        <el-form-item label="备注">
-          <el-input type="text" v-model="tempGoods.remarks"> </el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="关键词">
+            <el-input type="text" v-model="tempGoods.key_code"> </el-input>
+          </el-form-item>
+
+          <el-form-item label="商品状态">
+            <el-input type="text" v-model="tempGoods.status"> </el-input>
+          </el-form-item>
+
+          <el-form-item label="备注">
+            <el-input type="text" v-model="tempGoods.remarks"> </el-input>
+          </el-form-item>
+        </el-col>
 
 
 
@@ -359,3 +383,11 @@
     }
   }
 </script>
+<style >
+  /**
+      局部修改样式输入框左边文字右对齐
+   */
+  .el-form--label-left .el-form-item__label {
+    text-align: right;
+  }
+</style>
