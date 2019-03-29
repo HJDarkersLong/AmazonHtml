@@ -4,6 +4,7 @@
     <breadcrumb></breadcrumb>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
+        <span>您好！{{this.$store.state.user.nickname}}</span>
         <img class="user-avatar" src="/src/icons/User.png">
         <i class="el-icon-caret-bottom"></i>
       </div>

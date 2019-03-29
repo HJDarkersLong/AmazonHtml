@@ -42,7 +42,11 @@
       <el-table-column align="center" prop="description" label="产品描述" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="easy_discription" label="产品简要描述" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="key_code" label="关键词" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="status" label="商品状态" style="width: 60px;"></el-table-column>
+      <el-table-column align="center"  label="商品状态" style="width: 60px;">
+        <template slot-scope="scope">
+          {{getStatusInfo(list[scope.$index].status)}}
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="create_by" label="创建人" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="create_date" label="创建时间" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="update_by" label="更新人" style="width: 60px;"></el-table-column>
@@ -69,10 +73,10 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
+      <el-form class="small-space" :rules="rules" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
         <el-col :span="6">
-          <el-form-item  label=" 商品名称" >
-            <el-input type="text" aria-required="true" v-model="tempGoods.name"> </el-input>
+          <el-form-item  label=" 商品名称"  prop="name" >
+            <el-input clearable type="text" aria-required="true" v-model="tempGoods.name"> </el-input>
           </el-form-item>
 
           <el-form-item label=" 中文名称">
@@ -202,7 +206,14 @@
           </el-form-item>
 
           <el-form-item label="商品状态">
-            <el-input type="text" v-model="tempGoods.status"> </el-input>
+            <el-select v-model="tempGoods.status" placeholder="请选择">
+              <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
+              <el-option style="height:50px;"  key="1" label="待定" value="1"></el-option>
+              <el-option style="height:50px;"  key="2" label="上架" value="2"></el-option>
+              <el-option style="height:50px;"  key="3" label="下架" value="3"></el-option>
+              <el-option style="height:50px;"  key="4" label="屏蔽" value="4"></el-option>
+              <el-option style="height:50px;"  key="5" label="删除" value="5"></el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="备注">
@@ -239,6 +250,8 @@
           update: '编辑',
           create: '添加商品'
         },
+        status: [],
+        goodsStatusEnums: {},
         tempGoods: {
           id: '',
           name: '',
@@ -274,6 +287,12 @@
           update_by: '',
           update_date: '',
           remarks: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
         }
       }
     },
@@ -281,6 +300,19 @@
       this.getList()
     },
     methods: {
+      /*
+          Created By HJ on 2019-12-29 17:12:34
+          function:真无语的前端框架还是我不会用
+      */
+      getStatusInfo(status) {
+        switch (status) {
+          case 1 : return '待定'
+          case 2 : return '上架'
+          case 3 : return '下架'
+          case 4 : return '屏蔽'
+          case 5 : return '删除'
+        }
+      },
       getList() {
         // 查询列表
         if (!this.hasPerm('goods:list')) {
@@ -298,6 +330,16 @@
           this.totalCount = data.totalCount
         })
       },
+      getGoodsStatus() {
+        this.api({
+          url: '/goods/getGoodsStatus',
+          method: 'get'
+        }).then(data => {
+          this.goodsStatusEnums = data.goodsStatusEnums
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       handleSizeChange(val) {
         // 改变每页数量
         this.listQuery.pageRow = val
@@ -313,6 +355,7 @@
         return (this.listQuery.pageNum - 1) * this.listQuery.pageRow + $index + 1
       },
       showCreate() {
+        // this.getGoodsStatus()
         // 显示新增对话框
         this.tempGoods.id =''
         this.tempGoods.name =''

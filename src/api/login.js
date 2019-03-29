@@ -4,8 +4,6 @@ export function getInfo(token) {
   return api({
     url: '/login/testGetInfo',
     method: 'get',
-    params: {token}
+    params: { token }
   })
 }
-
-
