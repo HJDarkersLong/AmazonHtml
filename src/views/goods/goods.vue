@@ -75,137 +75,135 @@
     <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
       <el-form class="small-space" :rules="rules" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
         <el-col :span="6">
-          <el-form-item  label=" 商品名称"  prop="name" >
+          <el-form-item  label=" 商品名称："  prop="name" >
             <el-input clearable type="text" aria-required="true" v-model="tempGoods.name"> </el-input>
           </el-form-item>
 
-          <el-form-item label=" 中文名称">
+          <el-form-item label=" 中文名称：">
             <el-input type="text" v-model="tempGoods.cn_name"> </el-input>
           </el-form-item>
 
-          <el-form-item label="英文名称">
+          <el-form-item label="英文名称：">
             <el-input type="text" v-model="tempGoods.en_name"> </el-input>
           </el-form-item>
 
-          <el-form-item label="pcl商品编号">
+          <el-form-item label="pcl商品编号：">
             <el-input type="text" v-model="tempGoods.pcl_no"> </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item style="margin-left: 2px"label="sku货品编号">
+          <el-form-item style="margin-left: 2px"label="sku货品编号：">
             <el-input type="text" v-model="tempGoods.sku_no"> </el-input>
           </el-form-item>
 
-          <el-form-item label="  别名">
+          <el-form-item label="  别名：">
             <el-input type="text" v-model="tempGoods.other_name"> </el-input>
           </el-form-item>
-          <el-form-item label="中文报关名称">
+          <el-form-item label="中文报关名称：">
             <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
           </el-form-item>
 
-          <el-form-item label="英文报关名称">
+          <el-form-item label="英文报关名称：">
             <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
           </el-form-item>
         </el-col>
 
 
         <el-col :span="6">
-          <el-form-item label="中文报关名称">
+          <el-form-item label="中文报关名称：">
             <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
           </el-form-item>
 
-          <el-form-item label="英文报关名称">
+          <el-form-item label="英文报关名称：">
             <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
           </el-form-item>
 
-          <el-form-item label="海关编码">
+          <el-form-item label="海关编码：">
             <el-input type="text" v-model="tempGoods.hs_code"> </el-input>
           </el-form-item>
-          <el-form-item label="分类编号">
+          <el-form-item label="分类编号：">
             <el-input type="text" v-model="tempGoods.category_no"> </el-input>
           </el-form-item>
         </el-col>
 
 
         <el-col :span="6">
-          <el-form-item label="标签编号">
+          <el-form-item label="标签编号：">
             <el-input type="text" v-model="tempGoods.tag_no"> </el-input>
           </el-form-item>
 
-          <el-form-item label="品牌编号">
+          <el-form-item label="品牌编号：">
             <el-input type="text" v-model="tempGoods.brand_no"> </el-input>
           </el-form-item>
 
-          <el-form-item label="业务开发员">
+          <el-form-item label="业务开发员：">
             <el-input type="text" v-model="tempGoods.business_dev_user_no"> </el-input>
           </el-form-item>
 
-          <el-form-item label="采购询价员">
+          <el-form-item label="采购询价员：">
             <el-input type="text" v-model="tempGoods.buy_qus_user_no"> </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item label="采购员">
+          <el-form-item label="采购员：">
             <el-input type="text" v-model="tempGoods.buy_user_no"> </el-input>
           </el-form-item>
 
-          <el-form-item label="长(cm)">
+          <el-form-item label="长(cm)：">
             <el-input type="text" v-model="tempGoods.length"> </el-input>
           </el-form-item>
 
-          <el-form-item label="宽(cm)">
+          <el-form-item label="宽(cm)：">
             <el-input type="text" v-model="tempGoods.width"> </el-input>
           </el-form-item>
 
-          <el-form-item label="高(cm)">
+          <el-form-item label="高(cm)：">
             <el-input type="text" v-model="tempGoods.height"> </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item label="重量(kg)">
+          <el-form-item label="重量(kg)：">
             <el-input type="text" v-model="tempGoods.weight"> </el-input>
           </el-form-item>
 
-          <el-form-item label="材积重/5000(L*W*H))">
+          <el-form-item label="材积重(L*W*H)/5000">
             <el-input type="text" v-model="tempGoods.body_weight_5000"> </el-input>
           </el-form-item>
 
-          <el-form-item label="材积重/6000(L*W*H))">
+          <el-form-item label="材积重(L*W*H)/6000">
             <el-input type="text" v-model="tempGoods.body_weight_6000"> </el-input>
           </el-form-item>
 
-          <el-form-item label="成本价格(分)">
+          <el-form-item label="成本价格(分)：">
             <el-input type="text" v-model="tempGoods.base_price"> </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item label="销售价格(分)">
+          <el-form-item label="销售价格(分)：">
             <el-input type="text" v-model="tempGoods.sale_price"> </el-input>
           </el-form-item>
 
-          <el-form-item label="图片地址">
-            <el-input type="text" v-model="tempGoods.pic_address"> </el-input>
+
+
+          <el-form-item label="产品描述：">
+            <el-input  type="textarea" v-model="tempGoods.description"> </el-input>
           </el-form-item>
 
-          <el-form-item label="产品描述">
-            <el-input type="text" v-model="tempGoods.description"> </el-input>
-          </el-form-item>
-
-          <el-form-item label="产品简要描述">
-            <el-input type="text" v-model="tempGoods.easy_discription"> </el-input>
+          <el-form-item label="产品简要描述：">
+            <el-input  type="textarea" v-model="tempGoods.easy_discription"> </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item label="关键词">
+          <el-form-item label="关键词：">
             <el-input type="text" v-model="tempGoods.key_code"> </el-input>
           </el-form-item>
 
-          <el-form-item label="商品状态">
+          <el-form-item label="商品状态：">
             <el-select v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
               <el-option style="height:50px;"  key="1" label="待定" value="1"></el-option>
@@ -216,10 +214,28 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="备注">
-            <el-input type="text" v-model="tempGoods.remarks"> </el-input>
+          <el-form-item label="备注：">
+            <el-input  type="textarea"  placeholder="请输入内容" :rows="2" v-model="tempGoods.remarks"> </el-input>
           </el-form-item>
+
         </el-col>
+
+
+
+        <el-form-item label="图片地址：">
+          <!--<el-input type="text" v-model="tempGoods.pic_address"> </el-input>-->
+          <el-upload
+            accept="image/jpeg,image/gif,image/png"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
 
 
 
@@ -236,6 +252,8 @@
   export default {
     data() {
       return {
+        dialogImageUrl: '', // 图片上传相关
+        dialogVisible: false, // 图片上传相关
         totalCount: 0, // 分页组件--数据总条数
         list: [], // 表格的数据
         listLoading: false, // 数据加载等待动画
@@ -428,6 +446,14 @@
           this.getList()
           this.dialogFormVisible = false
         })
+      },
+      // 处理图片上传插件
+      handleRemove(file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url
+        this.dialogVisible = true
       }
     }
   }
