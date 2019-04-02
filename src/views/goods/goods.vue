@@ -56,9 +56,14 @@
       <!--<el-table-column align="center" prop="business_dev_user_no" label="业务开发员" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="buy_qus_user_no" label="采购询价员" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="buy_user_no" label="采购员" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="length" label="长(cm)" width="70%"></el-table-column>
-      <el-table-column align="center" prop="width" label="宽(cm)" width="70%"></el-table-column>
-      <el-table-column align="center" prop="height" label="高(cm)" width="70%"></el-table-column>
+      <!--<el-table-column align="center" prop="length" label="长(cm)" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="width" label="宽(cm)" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="height" label="高(cm)" width="70%"></el-table-column>-->
+      <el-table-column align="center" label="长宽高" width="145%">
+        <template slot-scope="scope">
+          ({{(list[scope.$index].length)}})x({{(list[scope.$index].width)}})x({{(list[scope.$index].height)}})
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="weight" label="重量(kg)" width="70%"></el-table-column>
       <el-table-column align="center" prop="body_weight_5000" label="材积重/5000(L*W*H))" width="70%"></el-table-column>
       <el-table-column align="center" prop="body_weight_6000" label="材积重/6000(L*W*H))" width="70%"></el-table-column>
@@ -70,8 +75,8 @@
             placement="right"
             title=""
             trigger="hover">
-            <img :src="list[scope.$index].pic_address" min-width="300" height="300"/>
-            <img slot="reference" :src="list[scope.$index].pic_address" :alt="list[scope.$index].pic_address"
+            <img :src="list[scope.$index].pic_address[0]" min-width="300" height="300"/>
+            <img slot="reference" :src="list[scope.$index].pic_address[0]" :alt="list[scope.$index].pic_address[0]"
                  style="max-height: 50px;max-width: 50px">
           </el-popover>
           <!--<img min-width="70" height="70" :src="list[scope.$index].pic_address" class="image">-->
@@ -325,7 +330,7 @@
           body_weight_6000: '',
           base_price: '',
           sale_price: '',
-          pic_address: '',
+          pic_address: [],
           description: '',
           easy_discription: '',
           key_code: '',
@@ -438,6 +443,7 @@
       showCreate() {
         // this.getGoodsStatus()
         // 显示新增对话框
+        this.usedImageInfo=[]
         this.tempGoods.id = ''
         this.tempGoods.name = ''
         this.tempGoods.cn_name = ''
@@ -462,7 +468,7 @@
         this.tempGoods.body_weight_6000 = ''
         this.tempGoods.base_price = ''
         this.tempGoods.sale_price = ''
-        this.tempGoods.pic_address = ''
+        this.tempGoods.pic_address = []
         this.tempGoods.description = ''
         this.tempGoods.easy_discription = ''
         this.tempGoods.key_code = ''
@@ -477,16 +483,26 @@
       },
       showUpdate($index) {
         // 显示修改对话框
-        this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
+        // this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
         this.goodsInfo($index)
+        this.usedImageInfo=[]
+        for (let i=0; i<this.list[$index].pic_address.length; i++) {
+          this.usedImageInfo.push({ name: '图片', url: this.list[$index].pic_address[i] })
+        }
+
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
       },
       showInfo($index) {
         // 展示对话框
-        this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
-        this.tempGoods.id = this.list[$index].id
+        // this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
+        this.usedImageInfo=[]
         this.goodsInfo($index)
+        for (let i=0; i<this.tempGoods.pic_address.length; i++) {
+          this.usedImageInfo[i]={ name: '图片', url: this.tempGoods.pic_address[i] }
+        }
+        this.tempGoods.id = this.list[$index].id
+
         this.dialogStatus = 'info'
         this.dialogFormVisible = true
       },
@@ -556,12 +572,17 @@
       },
       // 处理图片上传插件
       handleRemove(file, fileList) {
+        this.tempGoods.pic_address = []
+        debugger
         console.log(file, fileList)
-        this.tempGoods.pic_address = ''
+        for (let i=0; i<fileList.length; i++) {
+          this.tempGoods.pic_address.push(fileList[i].url)
+        }
+        console.log(this.tempGoods.pic_address)
       },
       handlePictureCardPreview(file) {
         // this.dialogImageUrl = file.url
-        this.dialogImageUrl = this.tempGoods.pic_address
+        this.dialogImageUrl = this.tempGoods.pic_address[0]
         this.dialogVisible = true
       },
       uploadSuccess: function (response, file, fileList) {
@@ -569,7 +590,7 @@
         console.log('上传文件成功file' + file)
         console.log('上传文件成功fileList' + fileList)
         // response：即为后端传来的数据，这里我返回的是图片的路径
-        this.tempGoods.pic_address = response
+        this.tempGoods.pic_address = this.tempGoods.pic_address + ',' + response
       },
       dateFormat(row, column, cellValue, index) {
         return cellValue ? fecha.format(new Date(cellValue), 'YYYY-MM-DD hh:mm:ss') : ''
