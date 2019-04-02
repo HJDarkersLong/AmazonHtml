@@ -8,6 +8,32 @@
         </el-form-item>
       </el-form>
     </div>
+    <div style="display: flex">
+      <el-input style="width: 150px;" v-model="input" clearable placeholder="商品名称"></el-input>
+      <el-input style="width: 150px;margin-left: 20px" v-model="input" clearable placeholder="sku货品编号"></el-input>
+      <el-select style="width: 150px;margin-left: 20px" v-model="input" placeholder="商品状态">
+        <el-option style="height:50px;" key="待定" label="待定" value="1"></el-option>
+        <el-option style="height:50px;" key="上架" label="上架" value="2"></el-option>
+        <el-option style="height:50px;" key="下架" label="下架" value="3"></el-option>
+        <el-option style="height:50px;" key="屏蔽" label="屏蔽" value="4"></el-option>
+        <el-option style="height:50px;" key="删除" label="删除" value="5"></el-option>
+      </el-select>
+      <div class="block" style="width: 400px;margin-left: 20px">
+        <!--<span class="demonstration"></span>-->
+        <el-date-picker
+          v-model="value7"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="-"
+          start-placeholder="最后修改开始日期"
+          end-placeholder="最后修改结束日期"
+          :picker-options="pickerOptions2">
+        </el-date-picker>
+      </div>
+    </div>
+    <br/>
+
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
               highlight-current-row>
       <el-table-column align="center" label="no" width="70%">
@@ -45,7 +71,8 @@
             title=""
             trigger="hover">
             <img :src="list[scope.$index].pic_address" min-width="300" height="300"/>
-            <img slot="reference" :src="list[scope.$index].pic_address" :alt="list[scope.$index].pic_address" style="max-height: 50px;max-width: 50px">
+            <img slot="reference" :src="list[scope.$index].pic_address" :alt="list[scope.$index].pic_address"
+                 style="max-height: 50px;max-width: 50px">
           </el-popover>
           <!--<img min-width="70" height="70" :src="list[scope.$index].pic_address" class="image">-->
         </template>
@@ -53,15 +80,17 @@
       <!--<el-table-column align="center" prop="description" label="产品描述" style="width: 60px;"></el-table-column>-->
       <el-table-column align="center" prop="easy_discription" label="产品简要描述" width="70%"></el-table-column>
       <el-table-column align="center" prop="key_code" label="关键词" width="70%"></el-table-column>
-      <el-table-column align="center"  label="商品状态" width="70%">
+      <el-table-column align="center" label="商品状态" width="70%">
         <template slot-scope="scope">
           {{getStatusInfo(list[scope.$index].status)}}
         </template>
       </el-table-column>
       <!--<el-table-column align="center" prop="create_by" label="创建人" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="create_date" label="创建时间" width="70%"></el-table-column>
+      <el-table-column align="center" :formatter="dateFormat" prop="create_date" label="创建时间"
+                       width="100%"></el-table-column>
       <!--<el-table-column align="center" prop="update_by" label="更新人" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="update_date" label="更新时间" width="70%"></el-table-column>
+      <el-table-column align="center" :formatter="dateFormat" prop="update_date" label="更新时间"
+                       width="100%"></el-table-column>
 
       <!--<el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
@@ -69,9 +98,9 @@
         </template>
       </el-table-column>-->
       <el-table-column align="center" label="管理" width="100%" v-if="hasPerm('goods:update')">
-        <template slot-scope="scope" >
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
-          <el-button type="info" icon="info" style="margin-left: 0px" @click="showInfo(scope.$index)">详情</el-button>
+        <template slot-scope="scope">
+          <i class="el-icon-edit" @click="showUpdate(scope.$index)"></i>
+          <i class="el-icon-info" style="margin-top:5px;margin-left: 0px" @click="showInfo(scope.$index)"></i>
         </template>
       </el-table-column>
     </el-table>
@@ -85,68 +114,69 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :rules="rules" :model="tempGoods" label-position="left" label-width="150px" style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
+      <el-form class="small-space" :rules="rules" :model="tempGoods" label-position="left" label-width="150px"
+               style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
         <el-col :span="6">
-          <el-form-item  label=" 商品名称："  prop="name" >
-            <el-input clearable type="text" aria-required="true" v-model="tempGoods.name"> </el-input>
+          <el-form-item label=" 商品名称：" prop="name">
+            <el-input clearable type="text" aria-required="true" v-model="tempGoods.name"></el-input>
           </el-form-item>
 
           <el-form-item label=" 中文名称：">
-            <el-input type="text" v-model="tempGoods.cn_name"> </el-input>
+            <el-input type="text" v-model="tempGoods.cn_name"></el-input>
           </el-form-item>
 
           <el-form-item label="英文名称：">
-            <el-input type="text" v-model="tempGoods.en_name"> </el-input>
+            <el-input type="text" v-model="tempGoods.en_name"></el-input>
           </el-form-item>
 
           <el-form-item label="pcl商品编号：">
-            <el-input type="text" v-model="tempGoods.pcl_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.pcl_no"></el-input>
           </el-form-item>
 
-          <el-form-item style="margin-left: 2px"label="sku货品编号：">
-            <el-input type="text" v-model="tempGoods.sku_no"> </el-input>
+          <el-form-item style="margin-left: 2px" label="sku货品编号：">
+            <el-input type="text" v-model="tempGoods.sku_no"></el-input>
           </el-form-item>
 
           <el-form-item label="  别名：">
-            <el-input type="text" v-model="tempGoods.other_name"> </el-input>
+            <el-input type="text" v-model="tempGoods.other_name"></el-input>
           </el-form-item>
 
           <el-form-item label="中文报关名称：">
-            <el-input type="text" v-model="tempGoods.cn_customs_name"> </el-input>
+            <el-input type="text" v-model="tempGoods.cn_customs_name"></el-input>
           </el-form-item>
 
           <el-form-item label="英文报关名称：">
-            <el-input type="text" v-model="tempGoods.en_customs_name"> </el-input>
+            <el-input type="text" v-model="tempGoods.en_customs_name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
           <el-form-item label="海关编码：">
-            <el-input type="text" v-model="tempGoods.hs_code"> </el-input>
+            <el-input type="text" v-model="tempGoods.hs_code"></el-input>
           </el-form-item>
 
           <el-form-item label="分类编号：">
-            <el-input type="text" v-model="tempGoods.category_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.category_no"></el-input>
           </el-form-item>
 
           <el-form-item label="标签编号：">
-            <el-input type="text" v-model="tempGoods.tag_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.tag_no"></el-input>
           </el-form-item>
 
           <el-form-item label="品牌编号：">
-            <el-input type="text" v-model="tempGoods.brand_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.brand_no"></el-input>
           </el-form-item>
 
           <el-form-item label="业务开发员：">
-            <el-input type="text" v-model="tempGoods.business_dev_user_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.business_dev_user_no"></el-input>
           </el-form-item>
 
           <el-form-item label="采购询价员：">
-            <el-input type="text" v-model="tempGoods.buy_qus_user_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.buy_qus_user_no"></el-input>
           </el-form-item>
 
           <el-form-item label="采购员：">
-            <el-input type="text" v-model="tempGoods.buy_user_no"> </el-input>
+            <el-input type="text" v-model="tempGoods.buy_user_no"></el-input>
           </el-form-item>
 
         </el-col>
@@ -154,67 +184,66 @@
 
         <el-col :span="6">
           <el-form-item label="长(cm)：">
-            <el-input type="text" v-model="tempGoods.length"> </el-input>
+            <el-input type="text" v-model="tempGoods.length"></el-input>
           </el-form-item>
 
           <el-form-item label="宽(cm)：">
-            <el-input type="text" v-model="tempGoods.width"> </el-input>
+            <el-input type="text" v-model="tempGoods.width"></el-input>
           </el-form-item>
 
           <el-form-item label="高(cm)：">
-            <el-input type="text" v-model="tempGoods.height"> </el-input>
+            <el-input type="text" v-model="tempGoods.height"></el-input>
           </el-form-item>
 
           <el-form-item label="重量(kg)：">
-            <el-input type="text" v-model="tempGoods.weight"> </el-input>
+            <el-input type="text" v-model="tempGoods.weight"></el-input>
           </el-form-item>
 
           <el-form-item label="材积重(L*W*H)/5000">
-            <el-input type="text" v-model="tempGoods.body_weight_5000"> </el-input>
+            <el-input type="text" v-model="tempGoods.body_weight_5000"></el-input>
           </el-form-item>
 
           <el-form-item label="材积重(L*W*H)/6000">
-            <el-input type="text" v-model="tempGoods.body_weight_6000"> </el-input>
+            <el-input type="text" v-model="tempGoods.body_weight_6000"></el-input>
           </el-form-item>
 
           <el-form-item label="成本价格(分)：">
-            <el-input type="text" v-model="tempGoods.base_price"> </el-input>
+            <el-input type="text" v-model="tempGoods.base_price"></el-input>
           </el-form-item>
 
         </el-col>
 
         <el-col :span="6">
           <el-form-item label="销售价格(分)：">
-            <el-input type="text" v-model="tempGoods.sale_price"> </el-input>
+            <el-input type="text" v-model="tempGoods.sale_price"></el-input>
           </el-form-item>
-
 
 
           <el-form-item label="产品描述：">
-            <el-input  type="textarea" rows="4" v-model="tempGoods.description"> </el-input>
+            <el-input type="textarea" rows="4" v-model="tempGoods.description"></el-input>
           </el-form-item>
 
           <el-form-item label="产品简要描述：">
-            <el-input  type="textarea" rows="4"   v-model="tempGoods.easy_discription"> </el-input>
+            <el-input type="textarea" rows="4" v-model="tempGoods.easy_discription"></el-input>
           </el-form-item>
 
           <el-form-item label="关键词：">
-            <el-input type="text" v-model="tempGoods.key_code"> </el-input>
+            <el-input type="text" v-model="tempGoods.key_code"></el-input>
           </el-form-item>
 
           <el-form-item label="商品状态：">
             <el-select v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
-              <el-option style="height:50px;"  key="待定" label="待定" value="1"></el-option>
-              <el-option style="height:50px;"  key="上架" label="上架" value="2"></el-option>
-              <el-option style="height:50px;"  key="下架" label="下架" value="3"></el-option>
-              <el-option style="height:50px;"  key="屏蔽" label="屏蔽" value="4"></el-option>
-              <el-option style="height:50px;"  key="删除" label="删除" value="5"></el-option>
+              <el-option style="height:50px;" key="待定" label="待定" value="1"></el-option>
+              <el-option style="height:50px;" key="上架" label="上架" value="2"></el-option>
+              <el-option style="height:50px;" key="下架" label="下架" value="3"></el-option>
+              <el-option style="height:50px;" key="屏蔽" label="屏蔽" value="4"></el-option>
+              <el-option style="height:50px;" key="删除" label="删除" value="5"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="备注：">
-            <el-input  type="textarea" rows="4"  placeholder="请输入内容" :rows="2" v-model="tempGoods.remarks"> </el-input>
+            <el-input type="textarea" rows="4" placeholder="请输入内容" :rows="2" v-model="tempGoods.remarks"></el-input>
           </el-form-item>
         </el-col>
 
@@ -238,9 +267,8 @@
         </el-form-item>
 
 
-
       </el-form>
-      <div slot="footer" class="dialog-footer"  >
+      <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button v-if="dialogStatus=='create'" type="success" @click="createGoods">创 建</el-button>
         <el-button v-if="dialogStatus=='update'" type="primary" @click="updateGoods">修 改</el-button>
@@ -249,6 +277,7 @@
   </div>
 </template>
 <script>
+  import fecha from 'fecha'
   export default {
     data() {
       return {
@@ -312,6 +341,34 @@
             { required: true, message: '请输入名称', trigger: 'blur' },
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ]
+        },
+        // 日期控件相关参数
+        pickerOptions2: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }]
         }
       }
     },
@@ -325,11 +382,16 @@
       */
       getStatusInfo(status) {
         switch (status) {
-          case 1 : return '待定'
-          case 2 : return '上架'
-          case 3 : return '下架'
-          case 4 : return '屏蔽'
-          case 5 : return '删除'
+          case 1 :
+            return '待定'
+          case 2 :
+            return '上架'
+          case 3 :
+            return '下架'
+          case 4 :
+            return '屏蔽'
+          case 5 :
+            return '删除'
         }
       },
       getList() {
@@ -376,40 +438,40 @@
       showCreate() {
         // this.getGoodsStatus()
         // 显示新增对话框
-        this.tempGoods.id =''
-        this.tempGoods.name =''
-        this.tempGoods.cn_name =''
-        this.tempGoods.en_name =''
-        this.tempGoods.pcl_no =''
-        this.tempGoods.sku_no =''
-        this.tempGoods.other_name =''
-        this.tempGoods.cn_customs_name =''
-        this.tempGoods.en_customs_name =''
-        this.tempGoods.hs_code =''
-        this.tempGoods.category_no =''
-        this.tempGoods.tag_no =''
-        this.tempGoods.brand_no =''
-        this.tempGoods.business_dev_user_no =''
-        this.tempGoods.buy_qus_user_no =''
-        this.tempGoods.buy_user_no =''
-        this.tempGoods.length =''
-        this.tempGoods.width =''
-        this.tempGoods.height =''
-        this.tempGoods.weight =''
-        this.tempGoods.body_weight_5000 =''
-        this.tempGoods.body_weight_6000 =''
-        this.tempGoods.base_price =''
-        this.tempGoods.sale_price =''
-        this.tempGoods.pic_address =''
-        this.tempGoods.description =''
-        this.tempGoods.easy_discription =''
-        this.tempGoods.key_code =''
-        this.tempGoods.status =''
-        this.tempGoods.create_by =''
-        this.tempGoods.create_date =''
-        this.tempGoods.update_by =''
-        this.tempGoods.update_date =''
-        this.tempGoods.remarks =''
+        this.tempGoods.id = ''
+        this.tempGoods.name = ''
+        this.tempGoods.cn_name = ''
+        this.tempGoods.en_name = ''
+        this.tempGoods.pcl_no = ''
+        this.tempGoods.sku_no = ''
+        this.tempGoods.other_name = ''
+        this.tempGoods.cn_customs_name = ''
+        this.tempGoods.en_customs_name = ''
+        this.tempGoods.hs_code = ''
+        this.tempGoods.category_no = ''
+        this.tempGoods.tag_no = ''
+        this.tempGoods.brand_no = ''
+        this.tempGoods.business_dev_user_no = ''
+        this.tempGoods.buy_qus_user_no = ''
+        this.tempGoods.buy_user_no = ''
+        this.tempGoods.length = ''
+        this.tempGoods.width = ''
+        this.tempGoods.height = ''
+        this.tempGoods.weight = ''
+        this.tempGoods.body_weight_5000 = ''
+        this.tempGoods.body_weight_6000 = ''
+        this.tempGoods.base_price = ''
+        this.tempGoods.sale_price = ''
+        this.tempGoods.pic_address = ''
+        this.tempGoods.description = ''
+        this.tempGoods.easy_discription = ''
+        this.tempGoods.key_code = ''
+        this.tempGoods.status = ''
+        this.tempGoods.create_by = ''
+        this.tempGoods.create_date = ''
+        this.tempGoods.update_by = ''
+        this.tempGoods.update_date = ''
+        this.tempGoods.remarks = ''
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
       },
@@ -428,7 +490,7 @@
         this.dialogStatus = 'info'
         this.dialogFormVisible = true
       },
-      goodsInfo ($index) {
+      goodsInfo($index) {
         this.tempGoods.id = this.list[$index].id
         this.tempGoods.name = this.list[$index].name
         this.tempGoods.cn_name = this.list[$index].cn_name
@@ -444,7 +506,7 @@
         this.tempGoods.brand_no = this.list[$index].brand_no
         this.tempGoods.business_dev_user_no = this.list[$index].business_dev_user_no
         this.tempGoods.buy_qus_user_no = this.list[$index].buy_qus_user_no
-        this.tempGoods.buy_user_no= this.list[$index].buy_user_no
+        this.tempGoods.buy_user_no = this.list[$index].buy_user_no
         this.tempGoods.length = this.list[$index].length
         this.tempGoods.width = this.list[$index].width
         this.tempGoods.height = this.list[$index].height
@@ -462,7 +524,7 @@
         this.tempGoods.create_date = this.list[$index].create_date
         this.tempGoods.update_by = this.list[$index].update_by
         this.tempGoods.update_date = this.list[$index].update_date
-        this.tempGoods.remarks= this.list[$index].remarks
+        this.tempGoods.remarks = this.list[$index].remarks
       },
       createGoods() {
         /**
@@ -495,23 +557,27 @@
       // 处理图片上传插件
       handleRemove(file, fileList) {
         console.log(file, fileList)
+        this.tempGoods.pic_address = ''
       },
       handlePictureCardPreview(file) {
         // this.dialogImageUrl = file.url
         this.dialogImageUrl = this.tempGoods.pic_address
         this.dialogVisible = true
       },
-      uploadSuccess: function(response, file, fileList) {
-        console.log('上传文件成功response' +response)
-        console.log('上传文件成功file' +file)
-        console.log('上传文件成功fileList' +fileList)
+      uploadSuccess: function (response, file, fileList) {
+        console.log('上传文件成功response' + response)
+        console.log('上传文件成功file' + file)
+        console.log('上传文件成功fileList' + fileList)
         // response：即为后端传来的数据，这里我返回的是图片的路径
         this.tempGoods.pic_address = response
+      },
+      dateFormat(row, column, cellValue, index) {
+        return cellValue ? fecha.format(new Date(cellValue), 'YYYY-MM-DD hh:mm:ss') : ''
       }
     }
   }
 </script>
-<style >
+<style>
   /**
       局部修改样式输入框左边文字右对齐
    */
