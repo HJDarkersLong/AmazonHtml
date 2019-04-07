@@ -486,10 +486,15 @@
         // this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
         this.goodsInfo($index)
         this.usedImageInfo=[]
-        for (let i=0; i<this.list[$index].pic_address.length; i++) {
-          this.usedImageInfo.push({ name: '图片', url: this.list[$index].pic_address[i] })
-        }
+        // 为了解决pic_address字段这个数组只有一个元素而且是空字符的情况
+        if (this.list[$index].pic_address.length ===0 ||
+          (this.list[$index].pic_address.length === 1 && this.list[$index].pic_address[0]==='')) {
 
+        } else {
+          for (let i=0; i<this.list[$index].pic_address.length; i++) {
+            this.usedImageInfo.push({ name: '图片', url: this.list[$index].pic_address[i] })
+          }
+        }
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
       },
@@ -498,9 +503,17 @@
         // this.usedImageInfo = [{ name: '图片', url: this.list[$index].pic_address }]
         this.usedImageInfo=[]
         this.goodsInfo($index)
-        for (let i=0; i<this.tempGoods.pic_address.length; i++) {
-          this.usedImageInfo[i]={ name: '图片', url: this.tempGoods.pic_address[i] }
+
+        // 为了解决pic_address字段这个数组只有一个元素而且是空字符的情况
+        if (this.list[$index].pic_address.length ===0 ||
+          (this.list[$index].pic_address.length === 1 && this.list[$index].pic_address[0]==='')) {
+
+        } else {
+          for (let i=0; i<this.list[$index].pic_address.length; i++) {
+            this.usedImageInfo.push({ name: '图片', url: this.list[$index].pic_address[i] })
+          }
         }
+
         this.tempGoods.id = this.list[$index].id
 
         this.dialogStatus = 'info'
@@ -589,8 +602,14 @@
         console.log('上传文件成功response' + response)
         console.log('上传文件成功file' + file)
         console.log('上传文件成功fileList' + fileList)
+        debugger
         // response：即为后端传来的数据，这里我返回的是图片的路径
-        this.tempGoods.pic_address = this.tempGoods.pic_address + ',' + response
+        if (this.tempGoods.pic_address.length === 0 ||
+          (this.tempGoods.pic_address.length === 1 && this.tempGoods.pic_address[0]==='')) {
+          this.tempGoods.pic_address = response
+        } else {
+          this.tempGoods.pic_address = this.tempGoods.pic_address + ',' + response
+        }
       },
       dateFormat(row, column, cellValue, index) {
         return cellValue ? fecha.format(new Date(cellValue), 'YYYY-MM-DD hh:mm:ss') : ''
