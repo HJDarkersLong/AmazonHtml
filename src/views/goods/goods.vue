@@ -9,19 +9,20 @@
       </el-form>
     </div>
     <div style="display: flex">
-      <el-input style="width: 150px;" v-model="input" clearable placeholder="商品名称"></el-input>
-      <el-input style="width: 150px;margin-left: 20px" v-model="input" clearable placeholder="sku货品编号"></el-input>
-      <el-select style="width: 150px;margin-left: 20px" v-model="input" placeholder="商品状态">
-        <el-option style="height:50px;" key="待定" label="待定" value="1"></el-option>
-        <el-option style="height:50px;" key="上架" label="上架" value="2"></el-option>
-        <el-option style="height:50px;" key="下架" label="下架" value="3"></el-option>
-        <el-option style="height:50px;" key="屏蔽" label="屏蔽" value="4"></el-option>
-        <el-option style="height:50px;" key="删除" label="删除" value="5"></el-option>
+      <el-input style="width: 150px;" :onchange="getListWithParams" v-model="queryParams.name" clearable placeholder="商品名称"></el-input>
+      <el-input style="width: 150px;margin-left: 20px" v-model="queryParams.sku_no" clearable placeholder="sku货品编号"></el-input>
+      <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
+        <el-option style="height:40px;" key="" label="无" value=""></el-option>
+        <el-option style="height:40px;" key="待定" label="待定" value="1"></el-option>
+        <el-option style="height:40px;" key="上架" label="上架" value="2"></el-option>
+        <el-option style="height:40px;" key="下架" label="下架" value="3"></el-option>
+        <el-option style="height:40px;" key="屏蔽" label="屏蔽" value="4"></el-option>
+        <el-option style="height:40px;" key="删除" label="删除" value="5"></el-option>
       </el-select>
       <div class="block" style="width: 400px;margin-left: 20px">
         <!--<span class="demonstration"></span>-->
         <el-date-picker
-          v-model="value7"
+          v-model="queryParams.timerange"
           type="daterange"
           align="right"
           unlink-panels
@@ -36,22 +37,22 @@
 
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
               highlight-current-row>
-      <el-table-column align="center" label="no" width="70%">
+      <el-table-column align="center" label="序号" >
         <template slot-scope="scope">
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="name" label="商品名称" width="100%"></el-table-column>
+      <el-table-column align="center" prop="name" label="商品名称" ></el-table-column>
       <!--<el-table-column align="center" prop="cn_name" label="中文名称" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="en_name" label="英文名称" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="pcl_no" label="pcl商品编号" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="sku_no" label="sku货品编号" width="70%"></el-table-column>
+      <el-table-column align="center" prop="sku_no" label="sku货品编号" ></el-table-column>
       <!--<el-table-column align="center" prop="other_name" label="别名" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="cn_customs_name" label="中文报关名称" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="en_customs_name" label="英文报关名称" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="hs_code" label="海关编码" width="70%"></el-table-column>
-      <el-table-column align="center" prop="category_no" label="分类编号" width="70%"></el-table-column>
-      <el-table-column align="center" prop="tag_no" label="标签编号" width="70%"></el-table-column>
+      <!--<el-table-column align="center" prop="hs_code" label="海关编码" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="category_no" label="分类编号" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="tag_no" label="标签编号" width="70%"></el-table-column>-->
       <!--<el-table-column align="center" prop="brand_no" label="品牌编号" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="business_dev_user_no" label="业务开发员" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="buy_qus_user_no" label="采购询价员" style="width: 60px;"></el-table-column>-->
@@ -59,17 +60,17 @@
       <!--<el-table-column align="center" prop="length" label="长(cm)" width="70%"></el-table-column>-->
       <!--<el-table-column align="center" prop="width" label="宽(cm)" width="70%"></el-table-column>-->
       <!--<el-table-column align="center" prop="height" label="高(cm)" width="70%"></el-table-column>-->
-      <el-table-column align="center" label="长宽高" width="145%">
+      <!--<el-table-column align="center" label="长宽高" width="145%">
         <template slot-scope="scope">
           ({{(list[scope.$index].length)}})x({{(list[scope.$index].width)}})x({{(list[scope.$index].height)}})
         </template>
-      </el-table-column>
-      <el-table-column align="center" prop="weight" label="重量(kg)" width="70%"></el-table-column>
-      <el-table-column align="center" prop="body_weight_5000" label="材积重/5000(L*W*H))" width="70%"></el-table-column>
-      <el-table-column align="center" prop="body_weight_6000" label="材积重/6000(L*W*H))" width="70%"></el-table-column>
-      <el-table-column align="center" prop="base_price" label="成本价格(分)" width="70%"></el-table-column>
-      <el-table-column align="center" prop="sale_price" label="销售价格(分)" width="70%"></el-table-column>
-      <el-table-column align="center" header-align="center" prop="pic_address" label="图片地址" width="70%">
+      </el-table-column>-->
+      <!--<el-table-column align="center" prop="weight" label="重量(kg)" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="body_weight_5000" label="材积重/5000(L*W*H))" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="body_weight_6000" label="材积重/6000(L*W*H))" width="70%"></el-table-column>-->
+      <el-table-column align="center" prop="base_price" label="成本价格(分)" ></el-table-column>
+      <el-table-column align="center" prop="sale_price" label="销售价格(分)" ></el-table-column>
+      <el-table-column align="center" header-align="center" prop="pic_address" label="图片地址" >
         <template slot-scope="scope">
           <el-popover
             placement="right"
@@ -83,26 +84,24 @@
         </template>
       </el-table-column>
       <!--<el-table-column align="center" prop="description" label="产品描述" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" prop="easy_discription" label="产品简要描述" width="70%"></el-table-column>
-      <el-table-column align="center" prop="key_code" label="关键词" width="70%"></el-table-column>
-      <el-table-column align="center" label="商品状态" width="70%">
+      <!--<el-table-column align="center" prop="easy_discription" label="产品简要描述" width="70%"></el-table-column>-->
+      <!--<el-table-column align="center" prop="key_code" label="关键词" width="70%"></el-table-column>-->
+      <el-table-column align="center" label="商品状态" >
         <template slot-scope="scope">
           {{getStatusInfo(list[scope.$index].status)}}
         </template>
       </el-table-column>
       <!--<el-table-column align="center" prop="create_by" label="创建人" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" :formatter="dateFormat" prop="create_date" label="创建时间"
-                       width="100%"></el-table-column>
+      <el-table-column align="center" :formatter="dateFormat" prop="create_date" label="创建时间"></el-table-column>
       <!--<el-table-column align="center" prop="update_by" label="更新人" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" :formatter="dateFormat" prop="update_date" label="更新时间"
-                       width="100%"></el-table-column>
+      <el-table-column align="center" :formatter="dateFormat" prop="update_date" label="更新时间"></el-table-column>
 
       <!--<el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.update_date}}</span>
         </template>
       </el-table-column>-->
-      <el-table-column align="center" label="管理" width="100%" v-if="hasPerm('goods:update')">
+      <el-table-column align="center" label="管理"  v-if="hasPerm('goods:update')">
         <template slot-scope="scope">
           <i class="el-icon-edit" @click="showUpdate(scope.$index)"></i>
           <i class="el-icon-info" style="margin-top:5px;margin-left: 0px" @click="showInfo(scope.$index)"></i>
@@ -239,11 +238,8 @@
           <el-form-item label="商品状态：">
             <el-select v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
-              <el-option style="height:50px;" key="待定" label="待定" value="1"></el-option>
-              <el-option style="height:50px;" key="上架" label="上架" value="2"></el-option>
-              <el-option style="height:50px;" key="下架" label="下架" value="3"></el-option>
-              <el-option style="height:50px;" key="屏蔽" label="屏蔽" value="4"></el-option>
-              <el-option style="height:50px;" key="删除" label="删除" value="5"></el-option>
+              <el-option v-for="item in goodsStatusEnums" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
             </el-select>
           </el-form-item>
 
@@ -274,7 +270,7 @@
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="dialogFormVisible = false" v-if="dialogStatus=='create' || dialogStatus=='update'">取 消</el-button>
         <el-button v-if="dialogStatus=='create'" type="success" @click="createGoods">创 建</el-button>
         <el-button v-if="dialogStatus=='update'" type="primary" @click="updateGoods">修 改</el-button>
       </div>
@@ -286,6 +282,7 @@
   export default {
     data() {
       return {
+        queryParams: {},
         usedImageInfo: [],
         dialogImageUrl: '', // 图片上传相关
         dialogVisible: false, // 图片上传相关
@@ -295,7 +292,11 @@
         listQuery: {
           pageNum: 1, // 页码
           pageRow: 50, // 每页条数
-          name: ''
+          name: '',
+          sku_no: '',
+          status: '',
+          beginTime: '',
+          endTime: ''
         },
         dialogStatus: 'create',
         dialogFormVisible: false,
@@ -304,7 +305,22 @@
           create: '添加商品'
         },
         status: [],
-        goodsStatusEnums: {},
+        goodsStatusEnums: [{
+          value: '1',
+          label: '待定'
+        }, {
+          value: '2',
+          label: '上架'
+        }, {
+          value: '3',
+          label: '下架'
+        }, {
+          value: '4',
+          label: '屏蔽'
+        }, {
+          value: '5',
+          label: '删除'
+        }],
         tempGoods: {
           id: '',
           name: '',
@@ -377,6 +393,25 @@
         }
       }
     },
+    watch: {
+      queryParams: {
+        handler: function () {
+          debugger
+          this.listQuery.name = this.queryParams.name
+          this.listQuery.sku_no = this.queryParams.sku_no
+          this.listQuery.status = this.queryParams.status
+          if (this.queryParams.timerange) {
+            this.listQuery.beginTime = this.queryParams.timerange[0]
+            this.listQuery.endTime = this.queryParams.timerange[1]
+          } else {
+            this.listQuery.beginTime = ''
+            this.listQuery.endTime = ''
+          }
+          this.getList()
+        },
+        deep: true
+      }
+    },
     created() {
       this.getList()
     },
@@ -399,6 +434,10 @@
             return '删除'
         }
       },
+      /*
+          Created By HJ on 2019-42-09 09:42:17
+          function: 直接查询，不带筛选条件
+      */
       getList() {
         // 查询列表
         if (!this.hasPerm('goods:list')) {
@@ -409,6 +448,23 @@
           url: '/goods/listGoods',
           method: 'get',
           params: this.listQuery
+        }).then(data => {
+          console.log(data)
+          this.listLoading = false
+          this.list = data.list
+          this.totalCount = data.totalCount
+        })
+      },
+      getListWithParams(val) {
+        // 查询列表
+        if (!this.hasPerm('goods:list')) {
+          return
+        }
+        this.listLoading = true
+        this.api({
+          url: '/goods/listGoodsWithParams',
+          method: 'get',
+          params: [this.listQuery, val]
         }).then(data => {
           console.log(data)
           this.listLoading = false
@@ -548,7 +604,7 @@
         this.tempGoods.description = this.list[$index].description
         this.tempGoods.easy_discription = this.list[$index].easy_discription
         this.tempGoods.key_code = this.list[$index].key_code
-        this.tempGoods.status = this.list[$index].status
+        this.tempGoods.status = parseInt(this.list[$index].status)
         this.tempGoods.create_by = this.list[$index].create_by
         this.tempGoods.create_date = this.list[$index].create_date
         this.tempGoods.update_by = this.list[$index].update_by
