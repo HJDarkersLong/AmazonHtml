@@ -152,12 +152,14 @@
           <el-form-item label="英文报关名称：">
             <el-input type="text" v-model="tempGoods.en_customs_name"></el-input>
           </el-form-item>
-        </el-col>
 
-        <el-col :span="6">
           <el-form-item label="海关编码：">
             <el-input type="text" v-model="tempGoods.hs_code"></el-input>
           </el-form-item>
+        </el-col>
+
+        <el-col :span="6">
+
 
           <el-form-item label="分类编号：">
             <el-input type="text" v-model="tempGoods.category_no"></el-input>
@@ -183,10 +185,6 @@
             <el-input type="text" v-model="tempGoods.buy_user_no"></el-input>
           </el-form-item>
 
-        </el-col>
-
-
-        <el-col :span="6">
           <el-form-item label="长(cm)：">
             <el-input type="text" v-model="tempGoods.length"></el-input>
           </el-form-item>
@@ -198,6 +196,12 @@
           <el-form-item label="高(cm)：">
             <el-input type="text" v-model="tempGoods.height"></el-input>
           </el-form-item>
+
+        </el-col>
+
+
+        <el-col :span="6">
+
 
           <el-form-item label="重量(kg)：">
             <el-input type="text" v-model="tempGoods.weight"></el-input>
@@ -215,24 +219,8 @@
             <el-input type="text" v-model="tempGoods.base_price"></el-input>
           </el-form-item>
 
-        </el-col>
-
-        <el-col :span="6">
           <el-form-item label="销售价格(分)：">
             <el-input type="text" v-model="tempGoods.sale_price"></el-input>
-          </el-form-item>
-
-
-          <el-form-item label="产品描述：">
-            <el-input type="textarea" rows="4" v-model="tempGoods.description"></el-input>
-          </el-form-item>
-
-          <el-form-item label="产品简要描述：">
-            <el-input type="textarea" rows="4" v-model="tempGoods.easy_discription"></el-input>
-          </el-form-item>
-
-          <el-form-item label="关键词：">
-            <el-input type="text" v-model="tempGoods.key_code"></el-input>
           </el-form-item>
 
           <el-form-item label="商品状态：">
@@ -246,6 +234,45 @@
           <el-form-item label="备注：">
             <el-input type="textarea" rows="4" placeholder="请输入内容" :rows="2" v-model="tempGoods.remarks"></el-input>
           </el-form-item>
+
+          <el-form-item label="产品简要描述：">
+            <el-input type="textarea" rows="4" v-model="tempGoods.easy_discription"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="6">
+
+
+
+          <el-form-item label="产品描述：">
+            <el-input type="textarea" rows="4" v-model="tempGoods.description"></el-input>
+          </el-form-item>
+
+
+
+          <el-form-item label="关键词：">
+            <el-input type="text" v-model="tempGoods.key_code"></el-input>
+          </el-form-item>
+
+
+
+          <el-form-item prop="email" label="渠道链接"   >
+            <el-input v-model="tempGoods.channel_links"></el-input>
+          </el-form-item>
+
+          <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'链接' + index" :key="domain.key" :prop="'domains.' + index + '.value'"
+            :rules="{ required: true, message: '链接不能为空', trigger: 'blur' }" >
+            <el-input style="font-size: 19px" v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+          </el-form-item>
+
+          <el-form-item>
+            <!--<el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>-->
+            <el-button @click="addDomain">新增采购链接</el-button>
+            <!--<el-button @click="resetForm('dynamicValidateForm')">重置</el-button>-->
+          </el-form-item>
+
+
+
         </el-col>
 
         <el-form-item label="图片地址：">
@@ -355,7 +382,11 @@
           create_date: '',
           update_by: '',
           update_date: '',
-          remarks: ''
+          remarks: '',
+          channel_links: '',
+          domains: [{
+            value: ''
+          }]
         },
         rules: {
           name: [
@@ -416,6 +447,18 @@
       this.getList()
     },
     methods: {
+      addDomain() {
+        this.tempGoods.domains.push({
+          value: '',
+          key: Date.now()
+        });
+      },
+      removeDomain(item) {
+        var index = this.tempGoods.domains.indexOf(item)
+        if (index !== -1) {
+          this.tempGoods.domains.splice(index, 1)
+        }
+      },
       /*
           Created By HJ on 2019-12-29 17:12:34
           function:真无语的前端框架还是我不会用
