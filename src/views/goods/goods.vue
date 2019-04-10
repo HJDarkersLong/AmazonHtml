@@ -256,18 +256,18 @@
 
 
 
-          <el-form-item prop="email" label="渠道链接"   >
-            <el-input v-model="tempGoods.channel_links"></el-input>
-          </el-form-item>
+         <!-- <el-form-item prop="email" label="渠道链接"   >
+            <el-input v-model="tempGoods.channel_links"></el-input>v-if="dialogStatus=='create'
+          </el-form-item>-->
 
           <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'链接' + index" :key="domain.key" :prop="'domains.' + index + '.value'"
             :rules="{ required: true, message: '链接不能为空', trigger: 'blur' }" >
-            <el-input style="font-size: 19px" v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+            <el-input style="font-size: 9px" v-model="domain.value"></el-input><el-button v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) ">删除</el-button>
           </el-form-item>
 
           <el-form-item>
             <!--<el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>-->
-            <el-button @click="addDomain">新增采购链接</el-button>
+            <el-button v-if="dialogStatus=='update' || dialogStatus=='create'"  @click="addDomain">新增采购链接</el-button>
             <!--<el-button @click="resetForm('dynamicValidateForm')">重置</el-button>-->
           </el-form-item>
 
@@ -287,9 +287,9 @@
             :file-list="this.usedImageInfo"
           >
 
-            <i class="el-icon-plus"></i>
+            <i v-if="dialogStatus=='update' || dialogStatus=='create'" class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
+          <el-dialog  :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
@@ -449,9 +449,8 @@
     methods: {
       addDomain() {
         this.tempGoods.domains.push({
-          value: '',
-          key: Date.now()
-        });
+          value: ''
+        })
       },
       removeDomain(item) {
         var index = this.tempGoods.domains.indexOf(item)
@@ -568,6 +567,7 @@
         this.tempGoods.base_price = ''
         this.tempGoods.sale_price = ''
         this.tempGoods.pic_address = []
+        this.tempGoods.domains=[]
         this.tempGoods.description = ''
         this.tempGoods.easy_discription = ''
         this.tempGoods.key_code = ''
@@ -653,6 +653,7 @@
         this.tempGoods.update_by = this.list[$index].update_by
         this.tempGoods.update_date = this.list[$index].update_date
         this.tempGoods.remarks = this.list[$index].remarks
+        this.tempGoods.domains = this.list[$index].domains
       },
       createGoods() {
         /**
@@ -722,5 +723,8 @@
    */
   .el-form--label-left .el-form-item__label {
     text-align: right;
+  }
+  .el-upload--picture-card{
+    border: 0px dashed #c0ccda;
   }
 </style>
