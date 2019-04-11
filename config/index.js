@@ -7,7 +7,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: './',
-    productionSourceMap: true,
+    productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
@@ -22,7 +22,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    host: 'localhost',
+    host: '127.0.0.1', // 正式服改地址
     port: 9520,
     autoOpenBrowser: true,
     autoOpenPage: '/login',
@@ -30,10 +30,12 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://127.0.0.1:8090', // 正式服改地址
         pathRewrite: {
           '^/api': '/'
-        }
+        },
+        secure: false,
+        changeOrigin: true
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
