@@ -30,7 +30,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://127.0.0.1:8090', // 正式服改地址
+        target: 'http://127.0.0.1:8080', // 正式服改地址
         pathRewrite: {
           '^/api': '/'
         },

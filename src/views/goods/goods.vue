@@ -42,6 +42,19 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
+      <el-table-column align="center" header-align="center" prop="pic_address" label="图片地址" >
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            title=""
+            trigger="hover">
+            <img :src="list[scope.$index].pic_address[0]" min-width="300" height="300"/>
+            <img slot="reference" :src="list[scope.$index].pic_address[0]" :alt="list[scope.$index].pic_address[0]"
+                 style="max-height: 50px;max-width: 50px">
+          </el-popover>
+          <!--<img min-width="70" height="70" :src="list[scope.$index].pic_address" class="image">-->
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="name" label="商品名称" ></el-table-column>
       <!--<el-table-column align="center" prop="cn_name" label="中文名称" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="en_name" label="英文名称" style="width: 60px;"></el-table-column>-->
@@ -70,19 +83,7 @@
       <!--<el-table-column align="center" prop="body_weight_6000" label="材积重/6000(L*W*H))" width="70%"></el-table-column>-->
       <el-table-column align="center" prop="base_price" label="成本价格(分)" ></el-table-column>
       <el-table-column align="center" prop="sale_price" label="销售价格(分)" ></el-table-column>
-      <el-table-column align="center" header-align="center" prop="pic_address" label="图片地址" >
-        <template slot-scope="scope">
-          <el-popover
-            placement="right"
-            title=""
-            trigger="hover">
-            <img :src="list[scope.$index].pic_address[0]" min-width="300" height="300"/>
-            <img slot="reference" :src="list[scope.$index].pic_address[0]" :alt="list[scope.$index].pic_address[0]"
-                 style="max-height: 50px;max-width: 50px">
-          </el-popover>
-          <!--<img min-width="70" height="70" :src="list[scope.$index].pic_address" class="image">-->
-        </template>
-      </el-table-column>
+
       <!--<el-table-column align="center" prop="description" label="产品描述" style="width: 60px;"></el-table-column>-->
       <!--<el-table-column align="center" prop="easy_discription" label="产品简要描述" width="70%"></el-table-column>-->
       <!--<el-table-column align="center" prop="key_code" label="关键词" width="70%"></el-table-column>-->
@@ -92,7 +93,7 @@
         </template>
       </el-table-column>
       <!--<el-table-column align="center" prop="create_by" label="创建人" style="width: 60px;"></el-table-column>-->
-      <el-table-column align="center" :formatter="dateFormat" prop="create_date" label="创建时间"></el-table-column>
+      <!--<el-table-column align="center" :formatter="dateFormat" prop="create_date" label="创建时间"></el-table-column>-->
       <!--<el-table-column align="center" prop="update_by" label="更新人" style="width: 60px;"></el-table-column>-->
       <el-table-column align="center" :formatter="dateFormat" prop="update_date" label="更新时间"></el-table-column>
 
@@ -686,7 +687,6 @@
       // 处理图片上传插件
       handleRemove(file, fileList) {
         this.tempGoods.pic_address = []
-        debugger
         console.log(file, fileList)
         for (let i=0; i<fileList.length; i++) {
           this.tempGoods.pic_address.push(fileList[i].url)
@@ -695,7 +695,7 @@
       },
       handlePictureCardPreview(file) {
         // this.dialogImageUrl = file.url
-        this.dialogImageUrl = this.tempGoods.pic_address[0]
+        this.dialogImageUrl = file.url
         this.dialogVisible = true
       },
       uploadSuccess: function (response, file, fileList) {
@@ -726,5 +726,8 @@
   }
   .el-upload--picture-card{
     border: 0px dashed #c0ccda;
+  }
+  .v-modal {
+    z-index: 2000 !important;
   }
 </style>
