@@ -35,9 +35,9 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'article',
-        name: '备忘录',
+        name: '公告',
         component: _import('article/article'),
-        meta: { title: '备忘录', icon: 'example' },
+        meta: { title: '公告', icon: 'example' },
         menu: 'article'
       }, {
         path: 'goods',
