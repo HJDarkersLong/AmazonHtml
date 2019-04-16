@@ -29,9 +29,25 @@ export const asyncRouterMap = [
   {
     path: '/system',
     component: Layout,
-    redirect: '/system/article',
-    name: '功能模块',
-    meta: { title: '功能模块', icon: 'tree' },
+    redirect: '/system/goods',
+    name: '商品管理',
+    meta: { title: '商品管理', icon: 'tree' },
+    children: [
+      {
+        path: 'goods',
+        name: '商品',
+        component: _import('goods/goods'),
+        meta: { title: '商品', icon: 'goods' },
+        menu: 'article'
+      }
+    ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/Article',
+    name: '公告管理',
+    meta: { title: '公告管理', icon: 'tree' },
     children: [
       {
         path: 'article',
@@ -39,12 +55,22 @@ export const asyncRouterMap = [
         component: _import('article/article'),
         meta: { title: '公告', icon: 'example' },
         menu: 'article'
-      }, {
-        path: 'goods',
-        name: '商品',
-        component: _import('goods/goods'),
-        meta: { title: '商品', icon: 'goods' },
-        menu: 'article'
+      }
+    ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/sort',
+    name: '分类管理',
+    meta: { title: '分类管理', icon: 'tree' },
+    children: [
+      {
+        path: 'sort',
+        name: '分类',
+        component: _import('sort/sort'),
+        meta: { title: '分类', icon: 'example' },
+        menu: 'sort'
       }
     ]
   },
