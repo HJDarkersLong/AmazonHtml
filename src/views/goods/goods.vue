@@ -325,6 +325,7 @@
 </template>
 <script>
   import fecha from 'fecha'
+  import { Message } from 'element-ui'
   export default {
     data() {
       return {
@@ -621,14 +622,14 @@
         this.tempGoods.business_dev_user_no = ''
         this.tempGoods.buy_qus_user_no = ''
         this.tempGoods.buy_user_no = ''
-        this.tempGoods.length = ''
-        this.tempGoods.width = ''
-        this.tempGoods.height = ''
-        this.tempGoods.weight = ''
-        this.tempGoods.body_weight_5000 = ''
-        this.tempGoods.body_weight_6000 = ''
-        this.tempGoods.base_price = ''
-        this.tempGoods.sale_price = ''
+        this.tempGoods.length = 0
+        this.tempGoods.width = 0
+        this.tempGoods.height = 0
+        this.tempGoods.weight = 0
+        this.tempGoods.body_weight_5000 = 0
+        this.tempGoods.body_weight_6000 = 0
+        this.tempGoods.base_price = 0
+        this.tempGoods.sale_price = 0
         this.tempGoods.pic_address = []
         this.tempGoods.domains=[]
         this.tempGoods.description = ''
@@ -730,11 +731,15 @@
               url: '/goods/addGoods',
               method: 'post',
               data: this.tempGoods
-            }).then(() => {
+            }).then((msg) => {
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
               this.getList()
               this.dialogFormVisible = false
-              this.createLoading = false
             })
+            this.createLoading = false
           } else {
             console.log('error submit!!')
             return false
@@ -751,6 +756,10 @@
               method: 'post',
               data: this.tempGoods
             }).then(() => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
               this.getList()
               this.dialogFormVisible = false
             })
