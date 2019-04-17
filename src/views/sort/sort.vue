@@ -1,179 +1,137 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form>
-        <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('sort:add')">添加
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
-              highlight-current-row>
-      <!--<el-table-column align="center" label="序号" width="80">-->
-        <!--<template slot-scope="scope">-->
-          <!--<span v-text="getIndex(scope.$index)"> </span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column align="center" prop="name" label="分类名" style="width: 60px;"></el-table-column>-->
-      <!--<el-table-column align="center" label="创建时间" width="170">-->
-        <!--<template slot-scope="scope">-->
-          <!--<span>{{scope.row.createTime}}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">-->
-        <!--<template slot-scope="scope">-->
-          <!--<el-button type="primary" icon="edit" @click="showUpdate(scope.$index,'tempSort')">修改</el-button>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <el-collapse  v-model="activeName" accordion>
-        <el-collapse-item title="分类" name="1">
-          <div v-for="item in list" >{{item}}</div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="listQuery.pageNum"
-      :page-size="listQuery.pageRow"
-      :total="totalCount"
-      :page-sizes="[10, 20, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :rules="rules"  :model="tempSort" ref="tempSort" label-position="left" label-width="60px"
-               style='width: 300px; margin-left:50px;'>
-        <el-form-item label="分类" prop="content">
-          <el-input type="text"   aria-required="true" v-model="tempSort.name">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" :loading="createLoading" type="success" @click="createSort('tempSort')">创 建</el-button>
-        <el-button type="primary" v-else @click="updateSort">修 改</el-button>
-      </div>
-    </el-dialog>
+  <el-button @click="handleAddTop">添加顶级节点</el-button>
+  <el-tree @node-click="handleNodeClick"
+           ref="expandMenuList" class="expand-tree"
+           v-if="isLoadingTree"
+           :data="setTree"
+           node-key="id"
+           highlight-current
+           :props="defaultProps"
+           :expand-on-click-node="false"
+           :render-content="renderContent"
+           :default-expanded-keys="defaultExpandKeys"></el-tree>
   </div>
 </template>
 <script>
+  import TreeRender from '@/components/tree_render'
+  import api from '@/resource/api'
   export default {
+    name: 'sort',
     data() {
       return {
-        rules: {
-          name: [
-            { required: true, message: '请输入分类内容', trigger: 'blur' }
-          ]
+        maxexpandId: api.maxexpandId, // 新增节点开始id
+        non_maxexpandId: api.maxexpandId, // 新增节点开始id(不更改)
+        isLoadingTree: false, // 是否加载节点树
+        setTree: api.treelist, // 节点树数据
+        defaultProps: {
+          children: 'children',
+          label: 'name'
         },
-        totalCount: 0, // 分页组件--数据总条数
-        list: [], // 表格的数据
-        listLoading: false, // 数据加载等待动画
-        listQuery: {
-          pageNum: 1, // 页码
-          pageRow: 50, // 每页条数
-          name: ''
-        },
-        dialogStatus: 'create',
-        createLoading: false,
-        dialogFormVisible: false,
-        textMap: {
-          update: '编辑',
-          create: '创建'
-        },
-        tempSort: {
-          id: '',
-          name: '',
-          level: ''
-        }
+        defaultExpandKeys: []// 默认展开节点列表
       }
     },
-    created() {
-      this.getList()
+    mounted() {
+      this.initExpand()
     },
     methods: {
-      getList() {
-        // 查询列表
-        if (!this.hasPerm('sort:list')) {
-          return
+      initExpand() {
+        // isLoadingTree用意也是在此
+        this.setTree.map((a) => {
+          this.defaultExpandKeys.push(a.id)
+        })
+        this.isLoadingTree = true
+      },
+      handleAddTop() {
+        this.setTree.push({
+          id: ++this.maxexpandId,
+          name: '新增节点',
+          pid: '',
+          isEdit: false,
+          children: []
+        })
+      },
+      renderContent(h, { node, data, store }) {
+        let that = this// 指向vue
+        return h(TreeRender, {
+          props: {
+            DATA: data, // 节点数据
+            NODE: node, // 节点内容
+            STORE: store, // 完整树形内容
+            maxexpandId: that.non_maxexpandId
+          },
+          on: {// 绑定方法
+            nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
+            nodeEdit: (s, d, n) => that.handleEdit(s, d, n),
+            nodeDel: (s, d, n) => that.handleDelete(s, d, n)
+          }
+        })
+      },
+      handleAdd(s, d, n) { // 增加节点
+        console.log(s, d, n)
+        if (n.level >=6) {
+          this.$message.error('最多只支持五级！')
+          return false
         }
-        this.listLoading = true
-        this.api({
-          url: '/sort/listSort',
-          method: 'get',
-          params: this.listQuery
-        }).then(data => {
-          this.listLoading = false
-          this.list = data.list
-          this.totalCount = data.totalCount
+        // 添加数据
+        d.children.push({
+          id: ++this.maxexpandId,
+          name: '新增节点',
+          pid: d.id,
+          isEdit: false,
+          children: []
         })
+        // 展开节点
+        if (!n.expanded) {
+          n.expanded = true
+        }
       },
-      handleSizeChange(val) {
-        // 改变每页数量
-        this.listQuery.pageRow = val
-        this.handleFilter()
+      handleEdit(s, d, n) { // 编辑节点
+        console.log(s, d, n)
       },
-      handleCurrentChange(val) {
-        // 改变页码
-        this.listQuery.pageNum = val
-        this.getList()
-      },
-      getIndex($index) {
-        // 表格序号
-        return (this.listQuery.pageNum - 1) * this.listQuery.pageRow + $index + 1
-      },
-      showCreate() {
-        // 显示新增对话框
-        this.tempSort.content = ''
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-      },
-      showUpdate($index, tempSort) {
-        // 显示修改对话框
-        this.tempSort.id = this.list[$index].id
-        this.tempSort.content = this.list[$index].content
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$refs[tempSort].validate((valid) => {
-          if (!valid) {
-            return false
-          }
-        })
-      },
-      createArticle(tempSort) {
-        console.log(tempSort)
-        this.$refs[tempSort].validate((valid) => {
-          if (valid) {
-            this.createLoading = true
-            // 保存新文章
-            this.api({
-              url: '/article/addArticle',
-              method: 'post',
-              data: this.tempSort
-            }).then(() => {
-              this.getList()
-              this.dialogFormVisible = false
-              this.createLoading = false
+      handleDelete(s, d, n) { // 删除节点
+        console.log(s, d, n)
+        let that = this
+        // 有子级不删除
+        if (d.children && d.children.length !== 0) {
+          this.$message.error('此节点有子级，不可删除！')
+          return false
+        } else {
+          // 删除操作
+          let delNode = () => {
+            let list = n.parent.data.children || n.parent.data
+            // 节点同级数据，顶级节点时无children
+            let _index = 99999// 要删除的index
+            list.map((c, i) => {
+              if (d.id == c.id) {
+                _index = i
+              }
             })
-          } else {
-            console.log('error submit!!')
-            return false
+            let k = list.splice(_index, 1)
+            // console.log(_index,k)
+            this.$message.success('删除成功！')
           }
-        })
+          let isDel = () => {
+            that.$confirm('是否删除此节点？', '提示', {
+              confirmButtonText: '确认',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+            }).catch(() => {
+              return false
+            })
+          }
+          // 新增节点直接删除，否则要通过请求数据删除
+          d.id > this.non_maxexpandId ? delNode() : isDel()
+        }
       },
-      updateArticle() {
-        // 修改文章
-        this.api({
-          url: '/article/updateArticle',
-          method: 'post',
-          data: this.tempSort
-        }).then(() => {
-          this.getList()
-          this.dialogFormVisible = false
-        })
+      handleNodeClick(d, n, s) { // 点击节点
+        d.isEdit = false// 放弃编辑状态
       }
     }
   }
 </script>
+
+<style scoped>
+
+</style>

@@ -68,7 +68,7 @@ export const asyncRouterMap = [
       {
         path: 'sort',
         name: '分类',
-        component: _import('sort/sort'),
+        component: _import('categorytree/categorytree'),
         meta: { title: '分类', icon: 'example' },
         menu: 'sort'
       }
