@@ -129,6 +129,28 @@
 
     <!--编辑和详情页面-->
     <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
+      <!--分类弹框-->
+      <el-dialog
+        width="30%"
+        title="选择分类"
+        :visible.sync="sortVisible"
+        append-to-body>
+        <el-aside width="300px" style="padding: 15px">
+          <el-tree
+            show-checkbox
+            ref="eventCategoryTree"
+            :data="eventCategoryTree"
+            :props="defaultProps"
+            node-key="id"
+            highlight-current
+            default-expand-all
+            :render-content="renderContent"
+            :expand-on-click-node="false">
+          </el-tree>
+
+        </el-aside>
+        <el-button @click="getCheckedNodes">确定</el-button>
+      </el-dialog>
       <el-form class="small-space" :rules="rules" ref="tempGoods" :model="tempGoods" label-position="left" label-width="150px"
                style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
         <!--第一列-->
@@ -157,8 +179,12 @@
             <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.hs_code"></el-input>
           </el-form-item>
 
-          <el-form-item label="分类编号：" prop="category_no">
-            <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_no"></el-input>
+          <el-form-item label="分类：" prop="category_no">
+            <div style="display: flex;">
+              <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_no"></el-input>
+              <el-button type="primary" @click="sortVisible = true">分类</el-button>
+            </div>
+
           </el-form-item>
 
           <el-form-item label="重量(kg)：" prop="weight">
@@ -329,6 +355,7 @@
   export default {
     data() {
       return {
+        eventCategoryTree: [ ], // 分类组件的树
         createLoading: false,
         inputReadOnly: true, // 是否允许修改，查看和修改时使用
         queryParams: {},
@@ -349,6 +376,7 @@
         },
         dialogStatus: 'create',
         dialogFormVisible: false,
+        sortVisible: false,
         textMap: {
           update: '编辑',
           create: '添加商品',
@@ -503,8 +531,12 @@
     },
     created() {
       this.getList()
+      this.getSortList()
     },
     methods: {
+      getCheckedNodes() {
+        console.log(this.$refs.tree.getCheckedNodes())
+      },
       addDomain() {
         if (this.tempGoods.domains.length <5) {
           this.tempGoods.domains.push({
@@ -537,6 +569,24 @@
           case 5 :
             return '删除'
         }
+      },
+      /*
+          Created By HJ on 2019-30-18 14:30:39
+          function : 获取分类列表
+      */
+      getSortList() {
+        // 查询列表
+        if (!this.hasPerm('sort:list')) {
+          return
+        }
+        this.api({
+          url: '/sort/listSort',
+          method: 'get',
+          params: this.listQuery
+        }).then(data => {
+          console.log(data)
+          this.eventCategoryTree = data
+        })
       },
       /*
           Created By HJ on 2019-42-09 09:42:17

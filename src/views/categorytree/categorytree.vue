@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <el-aside width="300px" style="padding: 15px;">
+    <el-button type="primary" icon="plus" @click="appendEvent('','','topData')">添加顶级节点</el-button>
+    <el-aside width="300px" style="padding: 15px; width: 1000px">
       <el-tree
         ref="eventCategoryTree"
         :data="eventCategoryTree"
@@ -42,37 +43,14 @@
       name: 'categorytree',
       data() {
         return {
+          addEventNodeRules: {
+            categoryName: [
+              { required: true, message: '请输入公告内容', trigger: 'blur' },
+              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+            ]
+          },
           // 树组件的数据
-          eventCategoryTree: [
-            {
-              id: 1,
-              label: '一级 1',
-              addAble: true, // 根据后台给的是否可添加节点，也可以根据当前的node节点自行判断
-              delAble: false, // 根据后台给的是否可删除节点，也可以根据当前的node节点自行判断
-              parentId: '',
-              children: [{
-                id: 4,
-                label: '二级 1-1',
-                addAble: false,
-                delAble: true,
-                parentId: '1',
-                children: [{
-                  label: '三级 1-1-1'
-                }]
-              }, {
-                id: 5,
-                label: '二级 2-1',
-                addAble: false,
-                delAble: true,
-                parentId: '1'
-              }, {
-                id: 6,
-                label: '二级 2-2',
-                addAble: false,
-                delAble: true,
-                parentId: '1'
-              }]
-            }],
+          eventCategoryTree: [ ],
           defaultProps: {
             children: 'children',
             label: 'label'
@@ -85,8 +63,7 @@
           /* 新增事件弹窗的输入框数据 */
           addEventdialogVisible: false,
           addEventForm: {
-            categoryName: '',
-            categoryFlag: ''
+            categoryName: ''
           }
         }
       },
@@ -127,42 +104,53 @@
             }
           }
           )
-    },
+        },
         /* 树形控件添加节点，添加弹窗出现 */
         appendEvent(s, d, n) {
           this.addEventdialogVisible = true
           this.triggerCurrenNodeData = d
           this.triggerCurrenNode = n
-    },
+        },
         /* 树形控件删除节点 */
         removeEvent(s, d, n) {
           const parent = n.parent
           const children = parent.data.children || parent.data
           const index = children.findIndex(data => data.id === d.id)
           console.log(index, '索引')
+          console.log('删除节点id==>' + d.id + 'level ==>' + n.level )
+          let dataGet={
+            typeid: d.id, // 当前节点typeid
+            level: n.level // 要删除的节点的层级为当前节点层级
+          }
           this.$confirm('确定要删除该节点吗？', '温馨提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$http('delete', `/url/****/****/${d.id}`, { queryParams: null })
-              .then((res) => {
-                if (res.statusCode === 200) {
-                  children.splice(index, 1)
-                  this.$message({
-                    message: res.messages[0],
-                    type: 'success'
-                  })
-                }
+            this.api({
+              url: '/sort/delSort',
+              method: 'get',
+              params: dataGet
+            }).then((res) => {
+              console.log(res)
+              // children.splice(index, 1)
+              this.getList()
+              this.$message({
+                message: '删除成功',
+                type: 'success'
               })
+            })
           }).catch(() => {
             this.$message({
               type: 'info',
               message: '已取消删除'
             })
           })
-    },
-
+        },
+        // 取消添加
+        addEventFormCancleBtn() {
+          this.addEventdialogVisible = false
+        },
         /* 节点新增，新增树形菜单事件分类弹窗，提交按钮 */
         addEventFormSubmitBtn(formname) {
           this.$refs[formname].validate((valid) => {
@@ -170,30 +158,41 @@
               console.log('验证成功')
               /* 获取当前input上输入的文字 */
               let dataPost={
-                label: this.addEventForm.categoryName.trim(),
-                id: this.addEventForm.categoryFlag.trim(),
+                name: this.addEventForm.categoryName.trim(),
+                // id: this.addEventForm.categoryFlag.trim(),
                 parentId: this.triggerCurrenNodeData.id, // 当前节点id
-                level: this.triggerCurrenNode.level // 当前节点层级
+                level: this.triggerCurrenNode ==='topData' ? 1 : (this.triggerCurrenNode.level + 1) // 要添加的节点的层级为当前节点层级+1
               }
               this.api({
-                url: '/goods/listGoods',
+                url: '/sort/addSort',
                 method: 'post',
                 params: dataPost
               }).then(data => {
-                console.log(data)
-                let result = data
-                /* 点击弹窗的确定按钮可以得到输入的数据，作为新的节点名称插入 */
-                /* 如果没有子节点，就创建一个子节点插入 */
-                if (!this.triggerCurrenNodeData.children) {
-                  this.$set(this.triggerCurrenNodeData, 'children', [])
-                };
-                // 如果已有子节点，就把返回的数据push进去，插入到树形数据中
-                this.triggerCurrenNodeData.children.push(result)
-                /* 关闭弹窗，重置输入框 */
+                // console.log(data)
+                // let result = data
+                // if (result.level === '1') {
+                //   this.eventCategoryTree.push(result)
+                //   this.addEventdialogVisible = false
+                // } else {
+                //   /* 点击弹窗的确定按钮可以得到输入的数据，作为新的节点名称插入 */
+                //   /* 如果没有子节点，就创建一个子节点插入 */
+                //   if (!this.triggerCurrenNodeData.children) {
+                //     this.$set(this.triggerCurrenNodeData, 'children', [])
+                //   };
+                //   // 如果已有子节点，就把返回的数据push进去，插入到树形数据中
+                //   this.triggerCurrenNodeData.children.push(result)
+                //   /* 关闭弹窗，重置输入框 */
+                //   this.addEventdialogVisible = false
+                //   this.$refs[formname].resetFields()
+                //   /* 刷新树形菜单 */
+                //   // this.getDictionarytTree();
+                // }
                 this.addEventdialogVisible = false
-                this.$refs[formname].resetFields()
-                /* 刷新树形菜单 */
-                // this.getDictionarytTree();
+                this.getList()
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
               }).catch((e) => {
                 console.log('请求失败', e)
               })
@@ -208,5 +207,11 @@
 </script>
 
 <style scoped>
-
+  .el-scrollbar__thumb {
+    display: none;
+  }
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 </style>
