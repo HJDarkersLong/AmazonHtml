@@ -11,6 +11,18 @@
     <div style="display: flex">
       <el-input style="width: 150px;" :onchange="getListWithParams" v-model="queryParams.name" clearable placeholder="商品名称"></el-input>
       <el-input style="width: 150px;margin-left: 20px" v-model="queryParams.sku_no" clearable placeholder="sku货品编号"></el-input>
+      <div class="block" style="width: 150px;margin-left: 20px">
+        <span class="demonstration"></span>
+        <el-cascader
+          clearable
+          placeholder="分类"
+          :options="eventCategoryTree"
+          :show-all-levels="false"
+          @change="handleChangeCascader"
+          v-model="queryParams.categoryArray"
+          >
+        </el-cascader>
+      </div>
       <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
         <el-option style="height:40px;" key="" label="无" value=""></el-option>
         <el-option style="height:40px;" key="待定" label="待定" value="1"></el-option>
@@ -131,21 +143,24 @@
     <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
       <!--分类弹框-->
       <el-dialog
+        lazy
         width="30%"
         title="选择分类"
         :visible.sync="sortVisible"
         append-to-body>
         <el-aside width="300px" style="padding: 15px">
+          <!--check-strictly   父节点不相关联子节点-->
+          <!--@check-change="handleClick"  当前节点变化时处理事件-->
           <el-tree
             show-checkbox
             ref="eventCategoryTree"
             :data="eventCategoryTree"
-            :props="defaultProps"
             node-key="id"
             highlight-current
             default-expand-all
-            :render-content="renderContent"
-            :expand-on-click-node="false">
+            check-strictly
+            :expand-on-click-node="false"
+            @check-change="checkChange" >
           </el-tree>
 
         </el-aside>
@@ -179,10 +194,10 @@
             <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.hs_code"></el-input>
           </el-form-item>
 
-          <el-form-item label="分类：" prop="category_no">
+          <el-form-item label="分类：" prop="category_name">
             <div style="display: flex;">
-              <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_no"></el-input>
-              <el-button type="primary" @click="sortVisible = true">分类</el-button>
+              <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_name"></el-input>
+              <el-button type="primary" :disabled = inputReadOnly  @click="sortVisible = true">选择</el-button>
             </div>
 
           </el-form-item>
@@ -199,7 +214,7 @@
         <!--第二列-->
         <el-col :span="6">
           <el-form-item label="商品状态：">
-            <el-select :readonly="inputReadOnly"  v-model="tempGoods.status" placeholder="请选择">
+            <el-select  :disabled = inputReadOnly  v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
               <el-option v-for="item in goodsStatusEnums" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
@@ -209,8 +224,7 @@
             <el-input :readonly="inputReadOnly"  type="textarea" rows="4" v-model="tempGoods.description"></el-input>
           </el-form-item>
 
-          <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'"
-                         :rules="{ required: true, message: '链接不能为空', trigger: 'blur' }" >
+          <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'" >
             <div style="display: flex">
               <el-input type="url" :readonly="inputReadOnly"  style="font-size: 9px" v-model="domain.value"></el-input><i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) "></i>
             </div>
@@ -355,6 +369,8 @@
   export default {
     data() {
       return {
+        selectedOptions: [], // 下拉筛选框
+        treeTemp: 0, // 编辑选择分类的时候，计数
         eventCategoryTree: [ ], // 分类组件的树
         createLoading: false,
         inputReadOnly: true, // 是否允许修改，查看和修改时使用
@@ -372,7 +388,8 @@
           sku_no: '',
           status: '',
           beginTime: '',
-          endTime: ''
+          endTime: '',
+          categoryArray: ''
         },
         dialogStatus: 'create',
         dialogFormVisible: false,
@@ -411,6 +428,7 @@
           en_customs_name: '',
           hs_code: '',
           category_no: '',
+          category_name: '',
           tag_no: '',
           brand_no: '',
           business_dev_user_no: '',
@@ -465,8 +483,7 @@
             { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
           ],
           category_no: [
-            { required: true, message: '请输入分类编号', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+            { required: true, message: '请选择分类', trigger: 'blur' }
           ],
           weight: [
             { required: true, message: '请输入重量', trigger: 'blur' }
@@ -517,6 +534,7 @@
           this.listQuery.name = this.queryParams.name
           this.listQuery.sku_no = this.queryParams.sku_no
           this.listQuery.status = this.queryParams.status
+          this.listQuery.categoryArray = this.queryParams.catrgoryArray
           if (this.queryParams.timerange) {
             this.listQuery.beginTime = this.queryParams.timerange[0]
             this.listQuery.endTime = this.queryParams.timerange[1]
@@ -534,8 +552,33 @@
       this.getSortList()
     },
     methods: {
+      // 筛选下拉框的change事件
+      handleChangeCascader(value) {
+        debugger
+        console.log(value)
+        this.queryParams.catrgoryArray = value + ''
+      },
+      checkChange(data, checked, node) {
+        this.treeTemp++
+        if (this.treeTemp%2 === 0) {
+          if (checked) {
+            this.$refs.eventCategoryTree.setCheckedNodes([])
+            this.$refs.eventCategoryTree.setCheckedNodes([data])
+
+          // 交叉点击节点
+          } else {
+            this.$refs.eventCategoryTree.setCheckedNodes([])
+          // 点击已经选中的节点，置空
+          }
+        }
+      },
       getCheckedNodes() {
-        console.log(this.$refs.tree.getCheckedNodes())
+        console.log('获取节点')
+        console.log(this.$refs.eventCategoryTree.getCheckedNodes())
+        this.tempGoods.category_no = this.$refs.eventCategoryTree.getCheckedNodes()[0].id
+        this.tempGoods.category_name = this.$refs.eventCategoryTree.getCheckedNodes()[0].label
+        console.log('分类编号：'+ this.tempGoods.category_no + '分类名称：' + this.tempGoods.category_name)
+        this.sortVisible = false
       },
       addDomain() {
         if (this.tempGoods.domains.length <5) {
@@ -667,6 +710,7 @@
         this.tempGoods.en_customs_name = ''
         this.tempGoods.hs_code = ''
         this.tempGoods.category_no = ''
+        this.tempGoods.category_name = ''
         this.tempGoods.tag_no = ''
         this.tempGoods.brand_no = ''
         this.tempGoods.business_dev_user_no = ''
@@ -693,7 +737,7 @@
         this.tempGoods.remarks = ''
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
-        this.$refs[tempGoods].validate((valid) => {})
+        // this.$refs[tempGoods].validate((valid) => {})
       },
       showInfo($index, tempGoods) {
         // 显示详情对话框
@@ -743,6 +787,7 @@
         this.tempGoods.en_customs_name = this.list[$index].en_customs_name
         this.tempGoods.hs_code = this.list[$index].hs_code
         this.tempGoods.category_no = this.list[$index].category_no
+        this.tempGoods.category_name = this.list[$index].category_name
         this.tempGoods.tag_no = this.list[$index].tag_no
         this.tempGoods.brand_no = this.list[$index].brand_no
         this.tempGoods.business_dev_user_no = this.list[$index].business_dev_user_no
