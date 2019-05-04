@@ -75,6 +75,22 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/transport',
+    name: '物流',
+    meta: { title: '物流管理', icon: 'tree' },
+    children: [
+      {
+        path: 'transport',
+        name: '物流管理',
+        component: _import('transport/transport'),
+        meta: { title: '物流管理', icon: 'example' },
+        menu: '物流管理'
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     redirect: '/user/',
