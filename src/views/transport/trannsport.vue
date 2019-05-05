@@ -21,7 +21,7 @@
           :show-all-levels="false"
           @change="handleChangeCascader"
           v-model="queryParams.categoryArray"
-          >
+        >
         </el-cascader>
       </div>
       <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
@@ -50,7 +50,7 @@
 
     <!--信息展示-->
     <el-table  :data="list" v-loading.body="listLoading"  element-loading-text="拼命加载中" border fit
-              highlight-current-row>
+               highlight-current-row>
       <el-table-column align="center" label="序号" >
         <template slot-scope="scope">
           <span v-text="getIndex(scope.$index)"> </span>
@@ -330,9 +330,9 @@
 
 
 
-         <!-- <el-form-item prop="email" label="渠道链接"   >
-            <el-input v-model="tempGoods.channel_links"></el-input>v-if="dialogStatus=='create'
-          </el-form-item>-->
+          <!-- <el-form-item prop="email" label="渠道链接"   >
+             <el-input v-model="tempGoods.channel_links"></el-input>v-if="dialogStatus=='create'
+           </el-form-item>-->
 
 
 
@@ -564,10 +564,10 @@
             this.$refs.eventCategoryTree.setCheckedNodes([])
             this.$refs.eventCategoryTree.setCheckedNodes([data])
 
-          // 交叉点击节点
+            // 交叉点击节点
           } else {
             this.$refs.eventCategoryTree.setCheckedNodes([])
-          // 点击已经选中的节点，置空
+            // 点击已经选中的节点，置空
           }
         }
       },
@@ -816,8 +816,8 @@
         this.$refs[tempGoods].validate((valid) => {
           if (valid) {
             /**
-               * 获取用户id当做创建人
-               */
+             * 获取用户id当做创建人
+             */
             this.createLoading = true
             this.tempGoods.create_by = this.$store.state.user.userId
             // 保存

@@ -23,24 +23,24 @@
           <div class="city-content">
             <ul v-for="item in upCountryList" class="clearfix">
               <label>{{item.ckey}}</label>
-              <li v-for="ritem in item.countryList" @click="selectDepCity(ritem)">{{ritem.airportName}}</li>
+              <li v-for="item in item.countryList" @click="selectDepCity(item)">{{item.airportName}}</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <div class="block" style="width: 150px;margin-left: 20px">
+      <!--<div class="block" style="width: 150px;margin-left: 20px">
         <span class="demonstration"></span>
 
-      </div>
-      <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
+      </div>-->
+      <!--<el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
         <el-option style="height:40px;" key="" label="无" value=""></el-option>
         <el-option style="height:40px;" key="待定" label="待定" value="1"></el-option>
         <el-option style="height:40px;" key="上架" label="上架" value="2"></el-option>
         <el-option style="height:40px;" key="下架" label="下架" value="3"></el-option>
         <el-option style="height:40px;" key="屏蔽" label="屏蔽" value="4"></el-option>
         <el-option style="height:40px;" key="删除" label="删除" value="5"></el-option>
-      </el-select>
+      </el-select>-->
     </div>
       <br/>
 
@@ -61,11 +61,11 @@
         <el-table-column align="center" prop="serviceDay" label="送达天数"></el-table-column>
         <el-table-column align="center" prop="TrackFlag" label="跟踪"></el-table-column>
         <el-table-column align="center" :formatter="dateFormat" prop="updateTime" label="更新时间"></el-table-column>
-        <el-table-column align="center" label="商品状态">
+        <!--<el-table-column align="center" label="商品状态">
           <template slot-scope="scope">
             {{getStatusInfo(list[scope.$index].status)}}
           </template>
-        </el-table-column>
+        </el-table-column>-->
         <el-table-column align="center" label="管理" v-if="hasPerm('goods:update')">
           <template slot-scope="scope">
             <el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>
@@ -89,58 +89,49 @@
       </el-pagination>
 
       <!--编辑和详情页面-->
-      <el-dialog :title="textMap[dialogStatus]" width="85%" :visible.sync="dialogFormVisible">
+      <el-dialog :title="textMap[dialogStatus]" width="50%" :visible.sync="dialogFormVisible">
         <el-form class="small-space" :rules="rules" ref="tempTransport" :model="tempTransport" label-position="left"
                  label-width="150px"
                  style='display:flex;flex-wrap:wrap;width: 85%; margin-left:50px;'>
           <!--第一列-->
-          <el-col :span="6">
-            <el-form-item label=" 商品名称：" prop="name">
+          <el-col :span="10">
+            <el-form-item label=" 国家名称：" prop="name">
               <el-input :readonly="inputReadOnly" type="text" aria-required="true"
                         v-model="tempTransport.name"></el-input>
             </el-form-item>
 
-            <el-form-item label=" 中文名称：" prop="cn_name">
+            <el-form-item label=" 最小重量/kg：" prop="cn_name">
               <el-input :readonly="inputReadOnly" type="text" aria-required="true"
                         v-model="tempTransport.cn_name"></el-input>
             </el-form-item>
-          </el-col>
 
-          <!--第二列-->
-          <el-col :span="6">
-            <el-form-item label="商品状态：">
+            <el-form-item label="最大重量/kg：">
               <el-select :disabled=inputReadOnly v-model="tempTransport.status" placeholder="请选择">
-                <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
                 <el-option v-for="item in goodsStatusEnums" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="产品描述：" prop="description">
-              <el-input :readonly="inputReadOnly" type="textarea" rows="4"
+
+            <el-form-item label="操作费/票：" prop="description">
+              <el-input :readonly="inputReadOnly" type="text" rows="4"
                         v-model="tempTransport.description"></el-input>
             </el-form-item>
           </el-col>
 
           <!--第三列-->
-          <el-col :span="6">
+          <el-col :span="10">
 
-            <el-form-item label="英文名称：">
+            <el-form-item label="运费单价/kg：">
               <el-input :readonly="inputReadOnly" type="text" v-model="tempTransport.en_name"></el-input>
             </el-form-item>
-            <el-form-item label="标签编号：">
+            <el-form-item label="运输方式：">
               <el-input :readonly="inputReadOnly" type="text" v-model="tempTransport.tag_no"></el-input>
             </el-form-item>
 
-          </el-col>
-
-          <!--第四列-->
-
-          <el-col :span="6">
-
-            <el-form-item label="pcl商品编号：">
-              <el-input :readonly="inputReadOnly" type="text" v-model="tempTransport.pcl_no"></el-input>
+            <el-form-item label="送达天数：">
+              <el-input :readonly="inputReadOnly" type="number" v-model="tempTransport.pcl_no"></el-input>
             </el-form-item>
-            <el-form-item label="  别名：">
+            <el-form-item label="  跟踪：">
               <el-input :readonly="inputReadOnly" type="text" v-model="tempTransport.other_name"></el-input>
             </el-form-item>
 
