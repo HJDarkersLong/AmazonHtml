@@ -52,15 +52,15 @@
             <span v-text="getIndex(scope.$index)"> </span>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="contryName" label="国家名称"></el-table-column>
-        <el-table-column align="center" prop="minWeight" label="最小重量/kg"></el-table-column>
-        <el-table-column align="center" prop="maxWeight" label="最大重量/kg"></el-table-column>
-        <el-table-column align="center" prop="operCost" label="操作费/票"></el-table-column>
-        <el-table-column align="center" prop="freightPrice" label="运费单价/kg"></el-table-column>
-        <el-table-column align="center" prop="transTypeid" label="运输方式id"></el-table-column>
-        <el-table-column align="center" prop="serviceDay" label="送达天数"></el-table-column>
-        <el-table-column align="center" prop="TrackFlag" label="跟踪"></el-table-column>
-        <el-table-column align="center" :formatter="dateFormat" prop="updateTime" label="更新时间"></el-table-column>
+        <el-table-column align="center" prop="contry_name" label="国家名称"></el-table-column>
+        <el-table-column align="center" prop="min_weight" label="最小重量/kg"></el-table-column>
+        <el-table-column align="center" prop="max_weight" label="最大重量/kg"></el-table-column>
+        <el-table-column align="center" prop="oper_cost" label="操作费/票"></el-table-column>
+        <el-table-column align="center" prop="freight_price" label="运费单价/kg"></el-table-column>
+        <el-table-column align="center" prop="trans_typeid" label="运输方式id"></el-table-column>
+        <el-table-column align="center" prop="service_day" label="送达天数"></el-table-column>
+        <el-table-column align="center" prop="track_flag" label="跟踪"></el-table-column>
+        <el-table-column align="center" :formatter="dateFormat" prop="update_time" label="更新时间"></el-table-column>
         <!--<el-table-column align="center" label="商品状态">
           <template slot-scope="scope">
             {{getStatusInfo(list[scope.$index].status)}}
@@ -68,7 +68,7 @@
         </el-table-column>-->
         <el-table-column align="center" label="管理" v-if="hasPerm('goods:update')">
           <template slot-scope="scope">
-            <el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>
+            <!--<el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>-->
             <el-button type="primary" style="margin-top:5px;margin-left: 0px"
                        @click="showUpdate(scope.$index,'tempGoods')">修改
             </el-button>
@@ -97,7 +97,7 @@
           <el-col :span="10">
             <el-form-item label=" 国家名称：" prop="name">
               <el-input :readonly="inputReadOnly" type="text" aria-required="true"
-                        v-model="tempTransport.name"></el-input>
+                        v-model="tempTransport.contry_name"></el-input>
             </el-form-item>
 
             <el-form-item label=" 最小重量/kg：" prop="cn_name">
@@ -187,7 +187,7 @@
         status: [],
         tempTransport: {
           id: '',
-          contryName: '',
+          contry_name: '',
           minWeight: '',
           maxWeight: '',
           operCost: '',
@@ -280,7 +280,7 @@
         }
         this.listLoading = true
         this.api({
-          url: '/goods/listGoods',
+          url: '/transport/listTransport',
           method: 'get',
           params: this.listQuery
         }).then(data => {

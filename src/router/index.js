@@ -87,6 +87,12 @@ export const asyncRouterMap = [
         component: _import('transport/transport'),
         meta: { title: '物流管理', icon: 'example' },
         menu: '物流管理'
+      },{
+        path: 'transportCost',
+        name: '运费试算',
+        component: _import('transport/transport'),
+        meta: { title: '运费试算', icon: 'example' },
+        menu: '运费试算'
       }
     ]
   },
