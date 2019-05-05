@@ -2,45 +2,45 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form>
-        <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate('tempTransport')" v-if="hasPerm('transport:add')">添加
-          </el-button>
-        </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-button type="primary" icon="plus" @click="showCreate('tempTransport')" v-if="hasPerm('transport:add')">添加-->
+          <!--</el-button>-->
+        <!--</el-form-item>-->
       </el-form>
     </div>
     <div style="display: flex">
-      <div class="country" style="position: relative">
-        <el-input style="width: 150px;" @focus="showCountryDialog" @blur="hideCountryDialog" v-model="queryParams.name"
-                  clearable placeholder="国家名称"></el-input>
-        <div class="country-components" v-if="showCountry" style="width: 800px">
-          <ul class="filter-tabar clearfix">
-            <li
-              style="text-align: center; padding: 0 14px ;float: left;padding-bottom: 14px; margin: 0 8px; margin-bottom: -1px; position: relative"
-              v-for="(item,index) in countryListKey" :class="{active:upCountryListIndex==index}"
-              @mouseover="upCountryListKey(index)">{{item}}
-            </li>
-          </ul>
-          <div class="city-content">
-            <ul v-for="item in upCountryList" class="clearfix">
-              <label>{{item.ckey}}</label>
-              <li v-for="item in item.countryList" @click="selectDepCity(item)">{{item.airportName}}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <!--<div class="country" style="position: relative">-->
+        <!--<el-input style="width: 150px;" @focus="showCountryDialog" @blur="hideCountryDialog" v-model="queryParams.name"-->
+                  <!--clearable placeholder="国家名称"></el-input>-->
+        <!--<div class="country-components" v-if="showCountry" style="width: 800px">-->
+          <!--<ul class="filter-tabar clearfix">-->
+            <!--<li-->
+              <!--style="text-align: center; padding: 0 14px ;float: left;padding-bottom: 14px; margin: 0 8px; margin-bottom: -1px; position: relative"-->
+              <!--v-for="(item,index) in countryListKey" :class="{active:upCountryListIndex==index}"-->
+              <!--@mouseover="upCountryListKey(index)">{{item}}-->
+            <!--</li>-->
+          <!--</ul>-->
+          <!--<div class="city-content">-->
+            <!--<ul v-for="item in upCountryList" class="clearfix">-->
+              <!--<label>{{item.ckey}}</label>-->
+              <!--<li v-for="item in item.countryList" @click="selectDepCity(item)">{{item.airportName}}</li>-->
+            <!--</ul>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
 
       <!--<div class="block" style="width: 150px;margin-left: 20px">
         <span class="demonstration"></span>
 
       </div>-->
-      <!--<el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="商品状态">
+      <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="物流公司">
         <el-option style="height:40px;" key="" label="无" value=""></el-option>
         <el-option style="height:40px;" key="待定" label="待定" value="1"></el-option>
         <el-option style="height:40px;" key="上架" label="上架" value="2"></el-option>
         <el-option style="height:40px;" key="下架" label="下架" value="3"></el-option>
         <el-option style="height:40px;" key="屏蔽" label="屏蔽" value="4"></el-option>
         <el-option style="height:40px;" key="删除" label="删除" value="5"></el-option>
-      </el-select>-->
+      </el-select>
     </div>
       <br/>
 
@@ -57,8 +57,8 @@
         <el-table-column align="center" prop="max_weight" label="最大重量/kg"></el-table-column>
         <el-table-column align="center" prop="oper_cost" label="操作费/票"></el-table-column>
         <el-table-column align="center" prop="freight_price" label="运费单价/kg"></el-table-column>
-        <el-table-column align="center" prop="trans_typeid" label="运输方式id"></el-table-column>
-        <el-table-column align="center" prop="service_day" label="送达天数"></el-table-column>
+        <el-table-column align="center" prop="trans_type_id" label="运输方式id"></el-table-column>
+        <!--<el-table-column align="center" prop="service_day" label="送达天数"></el-table-column>-->
         <el-table-column align="center" prop="track_flag" label="跟踪"></el-table-column>
         <el-table-column align="center" :formatter="dateFormat" prop="update_time" label="更新时间"></el-table-column>
         <!--<el-table-column align="center" label="商品状态">
@@ -66,14 +66,14 @@
             {{getStatusInfo(list[scope.$index].status)}}
           </template>
         </el-table-column>-->
-        <el-table-column align="center" label="管理" v-if="hasPerm('goods:update')">
-          <template slot-scope="scope">
-            <!--<el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>-->
-            <el-button type="primary" style="margin-top:5px;margin-left: 0px"
-                       @click="showUpdate(scope.$index,'tempGoods')">修改
-            </el-button>
-          </template>
-        </el-table-column>
+        <!--<el-table-column align="center" label="管理" v-if="hasPerm('goods:update')">-->
+          <!--<template slot-scope="scope">-->
+            <!--&lt;!&ndash;<el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>&ndash;&gt;-->
+            <!--<el-button type="primary" style="margin-top:5px;margin-left: 0px"-->
+                       <!--@click="showUpdate(scope.$index,'tempGoods')">修改-->
+            <!--</el-button>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
 
       </el-table>
 
