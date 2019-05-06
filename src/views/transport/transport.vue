@@ -33,13 +33,9 @@
         <span class="demonstration"></span>
 
       </div>-->
-      <el-select style="width: 150px;margin-left: 20px" v-model="queryParams.status" placeholder="物流公司">
-        <el-option style="height:40px;" key="" label="无" value=""></el-option>
-        <el-option style="height:40px;" key="待定" label="待定" value="1"></el-option>
-        <el-option style="height:40px;" key="上架" label="上架" value="2"></el-option>
-        <el-option style="height:40px;" key="下架" label="下架" value="3"></el-option>
-        <el-option style="height:40px;" key="屏蔽" label="屏蔽" value="4"></el-option>
-        <el-option style="height:40px;" key="删除" label="删除" value="5"></el-option>
+      <el-select clearable style="width: 150px;margin-left: 20px" v-model="queryParams.trans_type_id" placeholder="物流公司">
+        <!--<el-option style="height:40px;" key="" label="无" value=""></el-option>-->
+        <el-option style="height:40px;" v-for="item in transTypeList" :key=item.id :label="item.name" :value="item.id"></el-option>
       </el-select>
     </div>
       <br/>
@@ -57,7 +53,12 @@
         <el-table-column align="center" prop="max_weight" label="最大重量/kg"></el-table-column>
         <el-table-column align="center" prop="oper_cost" label="操作费/票"></el-table-column>
         <el-table-column align="center" prop="freight_price" label="运费单价/kg"></el-table-column>
-        <el-table-column align="center" prop="trans_type_id" label="运输方式id"></el-table-column>
+        <el-table-column align="center" prop="trans_type_id" label="运输方式"></el-table-column>
+        <el-table-column align="center" label="运输方式">
+          <template slot-scope="scope"  >
+              {{getTrabsType(list[scope.$index].trans_type_id)}}
+          </template>
+        </el-table-column>
         <!--<el-table-column align="center" prop="service_day" label="送达天数"></el-table-column>-->
         <el-table-column align="center" prop="track_flag" label="跟踪"></el-table-column>
         <el-table-column align="center" :formatter="dateFormat" prop="update_time" label="更新时间"></el-table-column>
@@ -106,10 +107,8 @@
             </el-form-item>
 
             <el-form-item label="最大重量/kg：">
-              <el-select :disabled=inputReadOnly v-model="tempTransport.status" placeholder="请选择">
-                <el-option v-for="item in goodsStatusEnums" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input :readonly="inputReadOnly" type="text" aria-required="true"
+                        v-model="tempTransport.cn_name"></el-input>
             </el-form-item>
 
             <el-form-item label="操作费/票：" prop="description">
@@ -157,6 +156,7 @@
   export default {
     data() {
       return {
+        transTypeList: {}, // 物流种类list
         upCountryList: [],
         showCountry: false,
         selectedOptions: [], // 下拉筛选框
@@ -188,15 +188,15 @@
         tempTransport: {
           id: '',
           contry_name: '',
-          minWeight: '',
-          maxWeight: '',
-          operCost: '',
-          freightPrice: '',
-          transTypeid: '',
-          serviceDay: '',
-          TrackFlag: '',
-          updateTime: '',
-          createTime: '',
+          min_weight: '',
+          max_weight: '',
+          oper_cost: '',
+          freight_price: '',
+          trans_type_id: '',
+          service_day: '',
+          Track_flag: '',
+          update_time: '',
+          create_time: '',
           status: '',
           memo: '',
           domains: [{
@@ -234,14 +234,49 @@
         }
       }
     },
+    watch: {
+      queryParams: {
+        handler: function () {
+          this.listQuery.trans_type_id = this.queryParams.trans_type_id
+          this.getList()
+        },
+        deep: true
+      }
+    },
     created() {
       this.getList()
+      this.getTransTypeList()
     },
     mounted() {
       this.countryListKey = ['热门城市', 'ABCD', 'EFGH', 'IJKL', 'MNOP', 'QRSTU', 'VWYZ', '港澳台']
       this.countryList = countryData
     },
     methods: {
+      // 获取物流名字
+      getTrabsType (transId) {
+        for (let i = 0; i<this.transTypeList.length; i++) {
+          if (this.transTypeList[i].id === transId) {
+            return this.transTypeList[i].name
+          }
+        }
+      },
+      // 获取物流种类list
+      getTransTypeList() {
+        // 查询列表
+        if (!this.hasPerm('goods:list')) {
+          return
+        }
+        this.api({
+          url: '/transport/listAllTransType',
+          method: 'get',
+          params: this.listQuery
+        }).then(data => {
+          console.log('获取物流种类')
+          console.log(data)
+          this.transTypeList = data
+          this.totalCount = data.totalCount
+        })
+      },
       upCountryListKey(index) {
         this.upCountryListIndex = index
         this.upCountryList = this.countryList[index]
@@ -255,7 +290,6 @@
       },
       // 筛选下拉框的change事件
       handleChangeCascader(value) {
-        debugger
         console.log(value)
         this.queryParams.catrgoryArray = value + ''
       },

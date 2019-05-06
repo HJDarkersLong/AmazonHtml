@@ -25,7 +25,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
-    // disableHostCheck: true,
+    disableHostCheck: true, // 使用natapp进行内网穿透的时候需要开启才能正常访问
     clientLogLevel: 'warning',
     historyApiFallback: true,
     hot: true,
