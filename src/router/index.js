@@ -90,7 +90,7 @@ export const asyncRouterMap = [
       },{
         path: 'transportCost',
         name: '运费试算',
-        component: _import('transport/transport'),
+        component: _import('transport/transportCost'),
         meta: { title: '运费试算', icon: 'example' },
         menu: '运费试算'
       }
