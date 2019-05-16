@@ -83,6 +83,7 @@
         <template slot-scope="scope">
           <el-button type="info" @click="showInfo(scope.$index,'tempGoods')">查看</el-button>
           <el-button type="primary" style="margin-top:5px;margin-left: 0px" @click="showUpdate(scope.$index,'tempGoods')">修改</el-button>
+          <el-button type="danger" style="margin-top:5px;margin-left: 0px" @click="deleteById(scope.$index,'tempGoods')" v-if="hasPerm('goods:delete')">删除</el-button>
         </template>
       </el-table-column>
       <!--注释其他参数展示-->
@@ -774,6 +775,31 @@
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$refs[tempGoods].validate((valid) => {})
+      },
+      deleteById($index, tempGoods) {
+        this.$confirm('确定删除该商品，该操作不可逆, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.tempGoods.id = this.list[$index].id
+          this.api({
+            url: '/goods/deleteGoodById',
+            method: 'post',
+            data: this.tempGoods
+          }).then((msg) => {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.getList()
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       },
       goodsInfo($index) {
         this.tempGoods.id = this.list[$index].id
