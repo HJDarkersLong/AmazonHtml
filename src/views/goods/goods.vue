@@ -204,7 +204,7 @@
           </el-form-item>
 
           <el-form-item label="重量(kg)：" prop="weight">
-            <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.weight"></el-input>
+            <el-input :readonly="inputReadOnly"  type="number" aria-required="true" v-model="tempGoods.weight"></el-input>
           </el-form-item>
 
           <el-form-item label="关键词：" prop="key_code">
@@ -347,6 +347,7 @@
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
             :on-success="uploadSuccess"
+            :before-upload="beforeAvatarUpload"
             :file-list="this.usedImageInfo"
           >
             <i v-if="dialogStatus=='update' || dialogStatus=='create'" class="el-icon-plus"></i>
@@ -402,19 +403,19 @@
         },
         status: [],
         goodsStatusEnums: [{
-          value: '1',
+          value: 1,
           label: '待定'
         }, {
-          value: '2',
+          value: 2,
           label: '上架'
         }, {
-          value: '3',
+          value: 3,
           label: '下架'
         }, {
-          value: '4',
+          value: 4,
           label: '屏蔽'
         }, {
-          value: '5',
+          value: 5,
           label: '删除'
         }],
         tempGoods: {
@@ -461,11 +462,11 @@
         rules: {
           name: [
             { required: true, message: '请输入名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+            { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
           ],
           cn_name: [
             { required: true, message: '请输入中文名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+            { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
           ],
           sku_no: [
             { required: true, message: '请输入sku货品编号', trigger: 'blur' },
@@ -477,7 +478,7 @@
           ],
           en_customs_name: [
             { required: true, message: '请输入英文报关名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+            { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
           ],
           hs_code: [
             { required: true, message: '请输入海关编码', trigger: 'blur' },
@@ -491,11 +492,11 @@
           ],
           key_code: [
             { required: true, message: '请输入关键词', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+            { min: 1, max: 300, message: '长度在 1 到 300个字符', trigger: 'blur' }
           ],
           description: [
             { required: true, message: '请输入描述', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+            { min: 1, max: 4000, message: '长度在 1 到 4000 个字符', trigger: 'blur' }
           ]
         },
         // 日期控件相关参数
@@ -876,6 +877,17 @@
         // this.dialogImageUrl = file.url
         this.dialogImageUrl = file.url
         this.dialogVisible = true
+      },
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+      },
+      beforeAvatarUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 5
+
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 5MB!');
+        }
+        return isLt2M;
       },
       uploadSuccess: function (response, file, fileList) {
         console.log('上传文件成功response' + response)
