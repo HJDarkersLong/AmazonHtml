@@ -73,7 +73,7 @@
       <el-table-column align="center" prop="sku_no" label="sku货品编号" ></el-table-column>
       <el-table-column align="center" prop="base_price" label="成本价格(分)" ></el-table-column>
       <el-table-column align="center" prop="sale_price" label="销售价格(分)" ></el-table-column>
-      <el-table-column align="center" label="商品状态" >
+      <el-table-column align="center" label="商品状态"  >
         <template slot-scope="scope">
           {{getStatusInfo(list[scope.$index].status)}}
         </template>
@@ -215,7 +215,7 @@
 
         <!--第二列-->
         <el-col :span="6">
-          <el-form-item label="商品状态：">
+          <el-form-item label="商品状态：" prop="status">
             <el-select  :disabled = inputReadOnly  v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
               <el-option v-for="item in goodsStatusEnums" :key="item.value" :label="item.label" :value="item.value">
@@ -498,6 +498,9 @@
           description: [
             { required: true, message: '请输入描述', trigger: 'blur' },
             { min: 1, max: 4000, message: '长度在 1 到 4000 个字符', trigger: 'blur' }
+          ],
+          status: [
+            { required: true, message: '请选择状态', trigger: 'blur' }
           ]
         },
         // 日期控件相关参数
