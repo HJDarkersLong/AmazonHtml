@@ -196,14 +196,6 @@
             <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.hs_code"></el-input>
           </el-form-item>
 
-          <el-form-item label="分类：" prop="category_name">
-            <div style="display: flex;">
-              <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_name"></el-input>
-              <el-button type="primary" :disabled = inputReadOnly  @click="sortVisible = true">选择</el-button>
-            </div>
-
-          </el-form-item>
-
           <el-form-item label="重量(kg)：" prop="weight">
             <el-input :readonly="inputReadOnly"  type="number" aria-required="true" v-model="tempGoods.weight"></el-input>
           </el-form-item>
@@ -211,10 +203,22 @@
           <el-form-item label="关键词：" prop="key_code">
             <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.key_code"></el-input>
           </el-form-item>
+
+          <el-form-item label="网络图片：">
+            <el-input :readonly="inputReadOnly"  type="textarea" rows="4" placeholder="多个图片链接请用英文逗号','分割" :rows="2" v-model="tempGoods.temp_pic_add"></el-input>
+          </el-form-item>
         </el-col>
 
         <!--第二列-->
         <el-col :span="6">
+
+          <el-form-item label="分类：" prop="category_name">
+            <div style="display: flex;">
+              <el-input :readonly="inputReadOnly"  type="text" aria-required="true" v-model="tempGoods.category_name"></el-input>
+              <el-button type="primary" :disabled = inputReadOnly  @click="sortVisible = true">选择</el-button>
+            </div>
+          </el-form-item>
+
           <el-form-item label="商品状态：" prop="status">
             <el-select  :disabled = inputReadOnly  v-model="tempGoods.status" placeholder="请选择">
               <!--<el-option style="height:50px;" v-for="(value,key) in goodsStatusEnums" :key="key" :label="key" :value="key"></el-option>-->
@@ -226,11 +230,16 @@
             <el-input :readonly="inputReadOnly"  type="textarea" rows="4" v-model="tempGoods.description"></el-input>
           </el-form-item>
 
-          <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'" >
+          <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'采购链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'" >
             <div style="display: flex">
-              <el-input type="url" :readonly="inputReadOnly"  style="font-size: 9px" v-model="domain.value"></el-input><i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) "></i>
+              <el-input type="url" :readonly="inputReadOnly"  style="font-size: 9px" v-model="domain.value"></el-input>
+              <el-tooltip content="点击删除" placement="top">
+                <i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) "></i>
+              </el-tooltip>
+              <el-tooltip content="点击复制" placement="top">
+                <i class="el-icon-info tag-read"   :data-clipboard-text=domain.value  @click.prevent="copyDomain(domain)"  ></i>
+              </el-tooltip>
             </div>
-
           </el-form-item>
 
           <el-form-item>
@@ -280,8 +289,6 @@
           <el-form-item label="高(cm)：">
             <el-input :readonly="inputReadOnly"  type="text" v-model="tempGoods.height"></el-input>
           </el-form-item>
-
-
 
         </el-col>
 
@@ -339,7 +346,7 @@
 
         </el-col>
 
-        <el-form-item  label="图片地址：">
+        <el-form-item  label="本地图片：">
           <!--<el-input type="text" v-model="tempGoods.pic_address"> </el-input>-->
           <el-upload
             accept="image/jpeg,image/gif,image/png"
@@ -357,9 +364,10 @@
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false" v-if="dialogStatus=='create' || dialogStatus=='update'">取 消</el-button>
+        <el-button @click="cancelSave()" v-if="dialogStatus=='create' || dialogStatus=='update'">取 消</el-button>
         <el-button v-if="dialogStatus=='create'" :loading="createLoading" type="success" @click="createGoods('tempGoods')">创 建</el-button>
         <el-button v-if="dialogStatus=='update'" type="primary" @click="updateGoods('tempGoods')">修 改</el-button>
       </div>
@@ -369,6 +377,8 @@
 <script>
   import fecha from 'fecha'
   import { Message } from 'element-ui'
+  import Clipboard from 'clipboard'
+
   export default {
     data() {
       return {
@@ -585,12 +595,12 @@
         this.sortVisible = false
       },
       addDomain() {
-        if (this.tempGoods.domains.length <5) {
+        if (this.tempGoods.domains.length < 3) {
           this.tempGoods.domains.push({
             value: ''
           })
         } else {
-          alert('渠道链接个数过多！')
+          alert('采购链接个数过多！')
         }
       },
       removeDomain(item) {
@@ -598,6 +608,22 @@
         if (index !== -1) {
           this.tempGoods.domains.splice(index, 1)
         }
+      },
+      copyDomain(domain) {
+        var clipboard = new Clipboard('.tag-read')
+        clipboard.on('success', e => {
+          console.log('复制成功')
+          this.$message('复制成功')
+          // 释放内存
+          clipboard.destroy()
+        })
+        clipboard.on('error', e => {
+          // 不支持复制
+          console.log('该浏览器不支持自动复制')
+          this.$message('该浏览器不支持自动复制')
+          // 释放内存
+          clipboard.destroy()
+        })
       },
       /*
           Created By HJ on 2019-12-29 17:12:34
@@ -870,6 +896,10 @@
           }
         })
       },
+      cancelSave() {
+        this.dialogFormVisible = false
+        this.getList()
+      },
       updateGoods(tempGoods) {
         this.$refs[tempGoods].validate((valid) => {
           if (valid) {
@@ -956,6 +986,9 @@
   }
   /*采购链接删除标志的垂直显示*/
   .el-icon-delete{
+    line-height: 40px;
+  }
+  .el-icon-info{
     line-height: 40px;
   }
 </style>

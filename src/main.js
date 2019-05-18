@@ -10,8 +10,10 @@ import '@/icons' // icon
 import '@/permission' // 权限
 import { default as api } from './utils/api'
 import { hasPermission } from './utils/hasPermission'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(ElementUI, { locale })
+Vue.use(VueClipboard)
 Vue.prototype.api = api
 // 全局的常量
 Vue.prototype.hasPerm = hasPermission
