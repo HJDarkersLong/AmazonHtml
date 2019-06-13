@@ -231,10 +231,28 @@
           </el-form-item>
 
           <el-form-item  v-for="(domain, index) in tempGoods.domains" :label="'采购链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'" >
+          <div style="display: flex">
+            <el-input type="url" :readonly="inputReadOnly"  style="font-size: 9px" v-model="domain.value"></el-input>
+            <el-tooltip content="点击删除" placement="top">
+              <i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) "></i>
+            </el-tooltip>
+            <el-tooltip content="点击复制" placement="top">
+              <i class="el-icon-info tag-read"   :data-clipboard-text=domain.value  @click.prevent="copyDomain(domain)"  ></i>
+            </el-tooltip>
+          </div>
+        </el-form-item>
+
+          <el-form-item>
+            <!--<el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>-->
+            <el-button   v-if="dialogStatus=='update' || dialogStatus=='create'"  @click="addDomain">新增采购链接</el-button>
+            <!--<el-button @click="resetForm('dynamicValidateForm')">重置</el-button>-->
+          </el-form-item>
+
+          <el-form-item  v-for="(domain, index) in tempGoods.domains_view" :label="'参考链接' + (index+1)" :key="domain.key" :prop="'domains.' + index + '.value'" >
             <div style="display: flex">
               <el-input type="url" :readonly="inputReadOnly"  style="font-size: 9px" v-model="domain.value"></el-input>
               <el-tooltip content="点击删除" placement="top">
-                <i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomain(domain) "></i>
+                <i class="el-icon-delete" v-if="dialogStatus=='update' || dialogStatus=='create'" @click.prevent="removeDomainView(domain) "></i>
               </el-tooltip>
               <el-tooltip content="点击复制" placement="top">
                 <i class="el-icon-info tag-read"   :data-clipboard-text=domain.value  @click.prevent="copyDomain(domain)"  ></i>
@@ -244,9 +262,13 @@
 
           <el-form-item>
             <!--<el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>-->
-            <el-button   v-if="dialogStatus=='update' || dialogStatus=='create'"  @click="addDomain">新增采购链接</el-button>
+            <el-button   v-if="dialogStatus=='update' || dialogStatus=='create'"  @click="addDomainView">新增参考链接</el-button>
             <!--<el-button @click="resetForm('dynamicValidateForm')">重置</el-button>-->
           </el-form-item>
+
+
+
+
 
 
 
@@ -396,7 +418,7 @@
         listLoading: false, // 数据加载等待动画
         listQuery: {
           pageNum: 1, // 页码
-          pageRow: 50, // 每页条数
+          pageRow: 10, // 每页条数
           name: '',
           sku_no: '',
           status: '',
@@ -467,6 +489,9 @@
           remarks: '',
           channel_links: '',
           domains: [{
+            value: ''
+          }],
+          domains_view: [{
             value: ''
           }]
         },
@@ -603,10 +628,25 @@
           alert('采购链接个数过多！')
         }
       },
+      addDomainView() {
+        if (this.tempGoods.domains_view.length < 3) {
+          this.tempGoods.domains_view.push({
+            value: ''
+          })
+        } else {
+          alert('参考链接个数过多！')
+        }
+      },
       removeDomain(item) {
         var index = this.tempGoods.domains.indexOf(item)
         if (index !== -1) {
           this.tempGoods.domains.splice(index, 1)
+        }
+      },
+      removeDomainView(item) {
+        var index = this.tempGoods.domains_view.indexOf(item)
+        if (index !== -1) {
+          this.tempGoods.domains_view.splice(index, 1)
         }
       },
       copyDomain(domain) {
@@ -756,6 +796,7 @@
         this.tempGoods.sale_price = 0
         this.tempGoods.pic_address = []
         this.tempGoods.domains=[]
+        this.tempGoods.domains_view=[]
         this.tempGoods.description = ''
         this.tempGoods.easy_discription = ''
         this.tempGoods.key_code = ''
@@ -867,6 +908,13 @@
         this.tempGoods.update_date = this.list[$index].update_date
         this.tempGoods.remarks = this.list[$index].remarks
         this.tempGoods.domains = this.list[$index].domains
+        this.tempGoods.domains_view = this.list[$index].domains_view
+        if (!this.list[$index].domains) {
+          this.tempGoods.domains=[]
+        }
+        if (!this.list[$index].domains_view) {
+          this.tempGoods.domains_view=[]
+        }
       },
       createGoods(tempGoods) {
         this.$refs[tempGoods].validate((valid) => {
