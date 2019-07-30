@@ -1,2 +1,3 @@
 # AmazonHtml
-Amazon前端框架代码
+亚马逊前端框架代码
+基于springboot和VUE开发的一款商品管理系统
